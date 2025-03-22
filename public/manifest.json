@@ -1,0 +1,10 @@
+{
+    "manifest_version": 3,
+    "name": "Tin Copy",
+    "version": "1.0.0",
+    "description": "An email drafter made of tin.",
+    "action": {
+      "default_popup": "index.html"
+    },
+    "permissions": []
+  }
