@@ -1,9 +1,9 @@
 import './App.css';
 
-import { Token, lex } from './lexer.ts';
+import { Token, scan } from './scanner.ts';
 
 function App() {
-    const tokens: readonly Token[] = lex("one|two|three");
+    const tokens: readonly Token[] = scan("one|two|three");
     const lines: React.ReactNode = tokens.map(
         t => <> 
             {t.toString()}<br /> 
