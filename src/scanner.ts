@@ -48,16 +48,12 @@ class Scanner {
         private source: string
     ) {}
 
-    /**
-     * @brief  Scan the entire source for tokens.
-     * 
-     * @par  Parameters
-     *  None.
-     * 
-     * @return  All the tokens in the source. Begins with a text token. Ends 
-     *  with a text token then an EOF token.
-     */
-    public scanAll(): Token[] {
+    public getTokens(): Token[] {
+        this.scanAll();
+        return this.tokens;
+    }
+
+    private scanAll() {
         this.addToken(TokenKind.Text);
         while (!this.eof()) {
             if (this.peek() == '[' && this.peek(1) == '[') {
@@ -68,7 +64,6 @@ class Scanner {
         }
         this.addToken(TokenKind.Text);
         this.addToken(TokenKind.EOF);
-        return this.tokens;
     }
 
     private scanTag() {
@@ -135,7 +130,6 @@ class Scanner {
         return this.source.charAt(this.i + ahead);
     }
 
-    // Make a token up to, not including, `this.i`.
     private addToken(kind: TokenKind) {
         this.tokens.push(new Token(
             this.source.substring(this.iToken, this.i), 
@@ -160,5 +154,5 @@ class Scanner {
 }
 
 export function scan(source: string): Token[] {
-    return new Scanner(source).scanAll();
+    return new Scanner(source).getTokens();
 }
