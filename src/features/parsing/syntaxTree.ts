@@ -1,4 +1,4 @@
-import { Token, TokenKind } from "./scanner";
+import { Token, TokenKind } from "../lexing/scanner";
 
 /**
  * A visitor to a concrete SyntaxTree, as in the visitor pattern.
@@ -11,7 +11,7 @@ export abstract class Visitor {
     public abstract visitTinDoc(document: TinDoc): void;
     public abstract visitTextExpr(textExpr: TextExpr): void;
     public abstract visitEOF(eof: EOF): void;
-    public abstract visitVariableTag(varaibleTag: VariableTag): void;
+    public abstract visitVariableTag(variableTag: VariableTag): void;
 
     protected visit(node: SyntaxTree): void {
         node.accept(this);
@@ -22,8 +22,6 @@ export abstract class Visitor {
  * An abstract syntax tree node.
  */
 export abstract class SyntaxTree {
-    private children: SyntaxTree[] = [];
-
     public static parseFromTokens(tokens: Token[]): SyntaxTree {
         /* Here the token queue is reversed, so that tokens can be removed in 
         constant time. We could use a different data structure to avoid the 

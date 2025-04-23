@@ -163,7 +163,7 @@ class Scanner {
      * @returns the character read if the predicate held. Otherwise, `null`.
      */
     private next(
-        predicate: (c: string) => boolean = (_: string) => true
+        predicate: (c: string) => boolean = (_) => true
     ): string | null {
         let char = this.peek();
         let matches = predicate(char);
