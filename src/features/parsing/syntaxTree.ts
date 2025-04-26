@@ -1,27 +1,69 @@
 import { Token, TokenKind } from "../lexing/scanner";
 
 /**
- * A visitor to a concrete SyntaxTree, as in the visitor pattern.
+ * A visitor to a syntax tree, as in the visitor pattern. Provides a unified 
+ * interface between visitors and subclasses of `SyntaxTree`.
  * 
  * @remarks
- * Visitor functions are named 'visit[concrete subclass]' since TS does not 
- * support function overloading.
+ * A concrete visitor extends either the `Visitor` or `UniformVisitor` 
+ * subclasses, depending on how it acts on the different nodes of a tree.
  */
-export abstract class Visitor {
+abstract class BaseVisitor {
     public abstract visitTinDoc(document: TinDoc): void;
     public abstract visitTextExpr(textExpr: TextExpr): void;
     public abstract visitEOF(eof: EOF): void;
     public abstract visitVariableTag(variableTag: VariableTag): void;
 
+    protected abstract visit(node: SyntaxTree): void;
+}
+
+/**
+ * A visitor to a syntax tree which distinguishes between different types of
+ * nodes.
+ */
+export abstract class Visitor extends BaseVisitor{
+    /** @override */
     protected visit(node: SyntaxTree): void {
-        node.accept(this);
+        return node.accept(this);
     }
+}
+
+/**
+ * A visitor which treats all subtypes of `SyntaxTree` the same.
+ */
+export abstract class UniformVisitor extends Visitor {
+    /** @override */
+    public visitTinDoc(document: TinDoc): void {
+        this.visit(document);
+    }
+
+    /** @override */
+    public visitTextExpr(textExpr: TextExpr): void {
+        this.visit(textExpr);
+    }
+
+    /** @override */
+    public visitEOF(eof: EOF): void {
+        this.visit(eof);
+    }
+
+    /** @override */
+    public visitVariableTag(variableTag: VariableTag): void {
+        this.visit(variableTag);
+    }
+}
+
+export type SyntaxError = {
+    message: string
 }
 
 /**
  * An abstract syntax tree node.
  */
 export abstract class SyntaxTree {
+    private m_errors: SyntaxError[] = [];
+    public get errors(): readonly SyntaxError[] { return this.m_errors; }
+
     public static parseFromTokens(tokens: Token[]): SyntaxTree {
         /* Here the token queue is reversed, so that tokens can be removed in 
         constant time. We could use a different data structure to avoid the 
@@ -39,6 +81,23 @@ export abstract class SyntaxTree {
      * @abstract
      */
     public abstract accept(visitor: Visitor): void;
+
+    /**
+     * Pass a visitor to be accepted by children. 
+     * 
+     * @remarks 
+     * This function can be used to recursively visit an entire tree
+     * if recursion is unconditional and orders children uniformly. Otherwise, 
+     * the visitor can manually call `accept` on the nodes' members.
+     */
+    public acceptToChildren(visitor: Visitor): void {
+        const children = this.children;
+        for (let i = 0; i < children.length; i++) {
+            children[i].accept(visitor);
+        }
+    }
+
+    public abstract get children(): SyntaxTree[];
 
     /**
      * Pop the next token if its kind is `kind`.
@@ -72,8 +131,7 @@ export abstract class SyntaxTree {
     }
 
     protected error(message: string) {
-        // TODO
-        console.log(message);
+        this.m_errors.push({ message });
     }
 }
 
@@ -85,6 +143,11 @@ export class TinDoc extends SyntaxTree {
         super();
         this.content = new TextExpr(tokens);
         this.eof = new EOF(tokens);
+    }
+
+    /** @override */
+    public get children(): SyntaxTree[] {
+        return [this.content, this.eof];
     }
 
     /** @override */
@@ -113,6 +176,14 @@ export class TextExpr extends SyntaxTree {
     }
 
     /** @override */
+    public get children(): SyntaxTree[] {
+        const contentArray: SyntaxTree[] = 
+            this.content instanceof VariableTag? [this.content] : [];
+        const tailArray = this.tail? [this.tail] : [];
+        return contentArray.concat(tailArray);
+    }
+
+    /** @override */
     public accept(visitor: Visitor): void {
         visitor.visitTextExpr(this);
     }
@@ -123,6 +194,11 @@ export class EOF extends SyntaxTree {
         super();
         if (!this.match(tokens, TokenKind.EOF)) 
             this.error("Expected the end of the email body.");
+    }
+
+    /** @override */
+    public get children(): SyntaxTree[] {
+        return [];
     }
 
     /** @override */
@@ -143,6 +219,11 @@ export class VariableTag extends SyntaxTree {
         ) {
             this.error("Expected a variable tag.");
         }
+    }
+
+    /** @override */
+    public get children(): SyntaxTree[] {
+        return [];
     }
 
     /** @override */
