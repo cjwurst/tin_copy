@@ -1,6 +1,9 @@
 import * as syn from './syntaxTree';
 import { Token } from '../lexing/scanner';
 
+/**
+ * Check if two syntax trees match in their recursive type structure.
+ */
 export default function structuresMatch(
     root1: syn.SyntaxTree, 
     root2: syn.SyntaxTree
