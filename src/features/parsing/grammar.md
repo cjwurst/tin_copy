@@ -19,7 +19,7 @@ Tin's grammar specification is based on extended Backus-Naur form.
 | \[\{...\}\] | None or more |
 
 document =
-    | textEspr 'eof'
+    | textExpr 'eof'
 
 textExpr = 
     | 'text' textExpr
