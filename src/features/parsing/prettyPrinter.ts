@@ -1,19 +1,17 @@
-import * as Syn from './syntaxTree'
+import * as syn from './syntaxTree'
 
-export function toPrettyString(root: Syn.SyntaxTree): string {
+export function toPrettyString(root: syn.SyntaxTree): string {
     return new PrettyPrinter(root).toPrettyString();
 }
 
-class PrettyPrinter extends Syn.Visitor {
-    /* This is a member rather than a return value to conform to the interface 
-    of `Syn.Visitor`. */
+class PrettyPrinter extends syn.Visitor {
     private result: string = '';
 
     private marginWidth: number = 0;
     private readonly marginIncrement = 4;
 
     constructor(
-        private readonly root: Syn.SyntaxTree
+        private readonly root: syn.SyntaxTree
     ) { super(); }
 
     public toPrettyString(): string {
@@ -24,7 +22,7 @@ class PrettyPrinter extends Syn.Visitor {
     }
 
     /** @override */
-    public visitTinDoc(document: Syn.TinDoc): void {
+    public visitTinDoc(document: syn.TinDoc): void {
         this.addLine('Tin Document:');
         this.indent();
         this.visit(document.content);
@@ -33,18 +31,30 @@ class PrettyPrinter extends Syn.Visitor {
     }
 
     /** @override */
-    public visitTextExpr(textExpr: Syn.TextExpr): void {
-
+    public visitTextExpr(textExpr: syn.TextExpr): void {
+        this.addLine('Text Expression:');
+        this.indent();
+        if (textExpr.content instanceof syn.VariableTag) 
+            this.visit(textExpr.content);
+        else 
+            this.addLine(textExpr.content);
+        if (textExpr.tail)
+            this.visit(textExpr.tail);
+        this.unindent();
     }
 
     /** @override */
-    public visitEOF(eof: Syn.EOF): void {
-
+    public visitEOF(_: syn.EOF): void {
+        this.addLine('EOF');
     }
 
     /** @override */
-    public visitVariableTag(varaibleTag: Syn.VariableTag): void {
-
+    public visitVariableTag(variableTag: syn.VariableTag): void {
+        this.addLine('Variable Tag:');
+        this.indent();
+        if (variableTag.identifier)
+            this.addLine(variableTag.identifier.lexeme);
+        this.unindent();
     }
 
     private indent(): void {
