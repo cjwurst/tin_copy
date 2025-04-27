@@ -38,7 +38,7 @@ export class Token {
 
     public toString(): string {
         return TokenKind[this.kind] 
-            + " " + this.lexeme 
+            + " '" + this.lexeme + "'" 
             + " at " + this.line 
             + ":" + this.iChar;
     }
