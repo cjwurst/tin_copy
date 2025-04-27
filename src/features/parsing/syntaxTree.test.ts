@@ -4,6 +4,7 @@ import * as syn from './syntaxTree';
 import { toPrettyString } from './prettyPrinter';
 import { Token, TokenKind, Symbol } from '../lexing/scanner';
 import structuresMatch from './treeMatcher';
+import reportErrors from './errorReporter';
 
 const badTokenArb = fc.constant(new Token('', TokenKind.Bad, 0, 0));
 
@@ -30,34 +31,60 @@ const tokenArb = new Map<
 
 /* Casting is necessary throughout this definition since the return type of 
 `tie` is `fc.Arbitrary<unknown>` */
-const wellFormedTokensArb/*: fc.Arbitrary<Token[]>*/ = fc.letrec((tie) => ({
-    document: fc.tuple(tie('textExpr'), getTokenArb(TokenKind.EOF)).map(
-        ([text, eof]) => [...(text as Token[]), eof]
-    ),
-    textExpr: fc.option(fc.tuple(
-        /* The text token arb is wrapped in a singleton tuple so that spread 
-        syntax is supported in both cases. */
-        fc.oneof(fc.tuple(getTokenArb(TokenKind.Text)), tie('variableTag')), 
-        tie('textExpr'))
-    ).map((pair) => {
-        if (pair) {
-            const [content, tail] = pair;
-            return [...(content as Token[]), ...(tail as Token[])];
-        }
-        return [];
-    }),
-    variableTag: fc.tuple(...getTokenArbs(
-        TokenKind.TagOpen, TokenKind.Identifier, TokenKind.TagClose
-    ))
-})).document;
+const wellFormedTokensArb = 
+    fc.tuple(
+        getTokenArb(TokenKind.TagOpen),
+        getTokenArb(TokenKind.Identifier),
+        getTokenArb(TokenKind.TagClose)
+    );
+    // fc.tuple(...getTokenArbs(
+    //     TokenKind.TagOpen, 
+    //     TokenKind.Identifier, 
+    //     TokenKind.TagClose
+    // ));
+//fc.letrec((tie) => ({
+//     document: fc.tuple(tie('textExpr'), getTokenArb(TokenKind.EOF)).map(
+//         ([text, eof]) => [...(text as Token[]), eof]
+//     ),
+//     textExpr: fc.option(fc.tuple(
+//         /* The text token arb is wrapped in a singleton tuple so that spread 
+//         syntax is supported in both cases. */
+//         fc.oneof(fc.tuple(getTokenArb(TokenKind.Text)), tie('variableTag')), 
+//         tie('textExpr'))
+//     ).map((pair) => {
+//         if (pair) {
+//             const [content, tail] = pair;
+//             return [...(content as Token[]), ...(tail as Token[])];
+//         }
+//         return [];
+//     }),
+//     variableTag: fc.tuple(...getTokenArbs(
+//         TokenKind.TagOpen, TokenKind.Identifier, TokenKind.TagClose
+//     ))
+// })).variableTag;
 
-test.prop([wellFormedTokensArb])(
+test('looking at well-formed arb', () => {
+    const tokens = fc.sample(wellFormedTokensArb, { seed: -411417336, path: "0", endOnFailure: true, numRuns: 1 });
+    for (let i = 0; i < tokens.length; i++) {
+        console.log(tokens[i]);
+    }
+});
+
+test.prop([wellFormedTokensArb], { verbose: 2, seed: -411417336, path: "0", endOnFailure: true, numRuns: 1 })(
     'should parse a well-formed sequence of tokens without error.',
     (tokens) => {
-        //let ast = syn.SyntaxTree.parseFromTokens(tokens);
-        return true;
+        const root = syn.SyntaxTree.parseFromTokens(tokens);
+        const report = reportErrors(root);
+        expect(report.count).to.equal(1);
     }
 );
+
+// test('look at arbs', () => {
+//     const samples = fc.sample(wellFormedTokensArb);
+//     for(let i = 0; i < samples.length; i++) {
+//         console.log(samples[i].map((t) => t.toString()).join(' ... '));
+//     }
+// });
 
 test.prop(getTokenArbs(
     TokenKind.Text,
