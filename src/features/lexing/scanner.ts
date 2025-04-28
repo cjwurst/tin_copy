@@ -15,7 +15,7 @@ export enum TokenKind {
     Bad
 }
 
-export enum Symbol {
+export enum TinSymbol {
     LeftBracket = '[',
     DoubleLeftBracket = '[[',
     RightBracket = ']',
@@ -38,7 +38,7 @@ export class Token {
 
     public toString(): string {
         return TokenKind[this.kind] 
-            + " " + this.lexeme 
+            + " '" + this.lexeme + "'" 
             + " at " + this.line 
             + ":" + this.iChar;
     }
@@ -57,9 +57,9 @@ class Scanner {
 
     private static keywords: Map<string, TokenKind> = new Map<string, TokenKind>(
         [
-            [Symbol.If, TokenKind.If],
-            [Symbol.Else, TokenKind.Else],
-            [Symbol.Tin, TokenKind.Tin]
+            [TinSymbol.If, TokenKind.If],
+            [TinSymbol.Else, TokenKind.Else],
+            [TinSymbol.Tin, TokenKind.Tin]
         ]
     );
 
@@ -83,8 +83,8 @@ class Scanner {
         this.addToken(TokenKind.Text);
         while (!this.eof()) {
             if (
-                this.next() == Symbol.LeftBracket && 
-                this.match(Symbol.LeftBracket)
+                this.next() == TinSymbol.LeftBracket && 
+                this.match(TinSymbol.LeftBracket)
             ) {
                 // Add text token up to tag open.
                 this.addToken(TokenKind.Text, 2);
@@ -110,20 +110,20 @@ class Scanner {
             if (foundWhitespace) this.addToken(TokenKind.Whitespace);
 
             switch (this.next()) {
-                case Symbol.Tilde:
+                case TinSymbol.Tilde:
                     this.addToken(TokenKind.Tilde);
                     break;
-                case Symbol.Colon:
+                case TinSymbol.Colon:
                     this.addToken(TokenKind.Colon);
                     break;
-                case Symbol.Comma:
+                case TinSymbol.Comma:
                     this.addToken(TokenKind.Comma);
                     break;
-                case Symbol.LeftBracket:
+                case TinSymbol.LeftBracket:
                     this.error('Left brackets should not appear inside a ' + 
                         'tag. (Nested tags are not allowed.)');
                     break;
-                case Symbol.RightBracket:
+                case TinSymbol.RightBracket:
                     if (this.match(']')) {
                         this.addToken(TokenKind.TagClose);
                         return;
@@ -163,7 +163,7 @@ class Scanner {
      * @returns the character read if the predicate held. Otherwise, `null`.
      */
     private next(
-        predicate: (c: string) => boolean = (_: string) => true
+        predicate: (c: string) => boolean = (_) => true
     ): string | null {
         let char = this.peek();
         let matches = predicate(char);

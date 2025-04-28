@@ -1,6 +1,6 @@
 import './App.css';
 
-import { Token, scan } from './scanner.ts';
+import { Token, scan } from './features/lexing/scanner.ts';
 
 function App() {
     const tokens: readonly Token[] = scan("one|two|three");
