@@ -1,6 +1,6 @@
 import * as syn from './syntaxTree';
 
-type ErrorReport = {
+export type ErrorReport = {
     count: number,
     message: string
 }
@@ -23,9 +23,10 @@ class ErrorReporter extends syn.UniformVisitor {
     /** @override */
     protected visit(node: syn.SyntaxTree): void {
         const errors = node.errors;
-        for (let i = 0; i < errors.length; i++) {
-            this.report.message += errors[i].message + '\n';
-        }
+        if (errors.length > 0)
+            this.report.message += errors
+                .map((e) => e.message)
+                .join('\n') + '\n';
         this.report.count += errors.length;
         node.acceptToChildren(this);
     }

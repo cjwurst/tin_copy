@@ -1,14 +1,15 @@
 import * as syn from './syntaxTree'
 
-export function toPrettyString(root: syn.SyntaxTree): string {
+export default function toPrettyString(root: syn.SyntaxTree): string {
     return new PrettyPrinter(root).toPrettyString();
 }
+
+const MARGIN_INCREMENT = 2;
 
 class PrettyPrinter extends syn.Visitor {
     private result: string = '';
 
     private marginWidth: number = 0;
-    private readonly marginIncrement = 4;
 
     constructor(
         private readonly root: syn.SyntaxTree
@@ -37,7 +38,8 @@ class PrettyPrinter extends syn.Visitor {
         if (textExpr.content instanceof syn.VariableTag) 
             this.visit(textExpr.content);
         else 
-            this.addLine(textExpr.content);
+            this.addLine(textExpr.content.length == 0? 
+                '[empty string]' : textExpr.content);
         if (textExpr.tail)
             this.visit(textExpr.tail);
         this.unindent();
@@ -58,11 +60,11 @@ class PrettyPrinter extends syn.Visitor {
     }
 
     private indent(): void {
-        this.marginWidth += this.marginIncrement;
+        this.marginWidth += MARGIN_INCREMENT;
     }
 
     private unindent(): void {
-        this.marginWidth -= this.marginIncrement;
+        this.marginWidth -= MARGIN_INCREMENT;
     }
 
     private addLine(s: string): void {

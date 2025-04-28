@@ -1,11 +1,11 @@
 import { test, fc } from '@fast-check/vitest';
 import { expect } from 'vitest';
-import { scan, Token, TokenKind, Symbol} from './scanner';
+import { scan, Token, TokenKind, TinSymbol} from './scanner';
 
 // Note: These tests are brittle wrt dummy pre- and post-tags
 
 const symbolArb = fc.constantFrom(
-    ...Object.values(Symbol).map((s) => s as string)
+    ...Object.values(TinSymbol).map((s) => s as string)
 );
 const sourceArb = fc.array(symbolArb).map((l) => l.join(''));
 
@@ -34,16 +34,16 @@ test('should scan an empty source to a list of two empty text tokens and an ' +
 
 test('should scan all kinds of token', () => {
     let source = 'ipsum' + 
-        Symbol.DoubleLeftBracket + 
-        Symbol.RightBracket + 
-        Symbol.Tilde + 
-        Symbol.Colon +
-        Symbol.Comma +
-        Symbol.If + ' ' +
-        Symbol.Else + ' ' + 
-        Symbol.Tin + ' ' + 
+        TinSymbol.DoubleLeftBracket + 
+        TinSymbol.RightBracket + 
+        TinSymbol.Tilde + 
+        TinSymbol.Colon +
+        TinSymbol.Comma +
+        TinSymbol.If + ' ' +
+        TinSymbol.Else + ' ' + 
+        TinSymbol.Tin + ' ' + 
         'identifier' + 
-        Symbol.DoubleRightBracket;
+        TinSymbol.DoubleRightBracket;
     let tokens = scan(source);
     let expectedKinds:TokenKind[] = [
         TokenKind.Text,
@@ -83,5 +83,5 @@ function isEmpty(t: Token) {
 }
 
 function isPureText(s: string) {
-    return !s.includes(Symbol.DoubleLeftBracket) && s.length > 0;
+    return !s.includes(TinSymbol.DoubleLeftBracket) && s.length > 0;
 }
