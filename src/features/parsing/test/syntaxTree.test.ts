@@ -1,9 +1,9 @@
 import { test } from '@fast-check/vitest';
 import { expect } from 'vitest';
-import * as syn from './syntaxTree';
+import * as syn from '../syntaxTree';
 import * as arb from './syntaxTreeArbs';
-import { TokenKind } from '../lexing/scanner';
-import structuresMatch from './treeMatcher';
+import { TokenKind } from '../../lexing/scanner';
+import structuresMatch from '../treeMatcher';
 
 test.prop([arb.wellFormedParseArb], { 
     verbose: 2, 

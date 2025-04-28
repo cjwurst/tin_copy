@@ -1,10 +1,10 @@
 import { fc } from '@fast-check/vitest';
-import { Token, TokenKind, TinSymbol } from '../lexing/scanner';
-import { badTokenArb, tokenArb } from '../lexing/scannerArbs';
-import * as syn from './syntaxTree';
-import { ErrorReport } from './errorReporter';
-import reportErrors from './errorReporter';
-import toPrettyString from './prettyPrinter';
+import { Token, TokenKind, TinSymbol } from '../../lexing/scanner';
+import { badTokenArb, tokenArb } from '../../lexing/test/scannerArbs';
+import * as syn from '../syntaxTree';
+import { ErrorReport } from '../errorReporter';
+import reportErrors from '../errorReporter';
+import toPrettyString from '../prettyPrinter';
 
 class ParseResult { 
     constructor(

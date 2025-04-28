@@ -1,5 +1,5 @@
 import { fc } from '@fast-check/vitest';
-import { Token, TokenKind, TinSymbol } from './scanner';
+import { Token, TokenKind, TinSymbol } from '../scanner';
 
 export const badTokenArb = fc.constant(new Token('', TokenKind.Bad, 0, 0));
 
