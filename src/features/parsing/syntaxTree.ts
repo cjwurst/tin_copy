@@ -210,10 +210,10 @@ export class EOF extends SyntaxTree {
 export class VariableTag extends SyntaxTree {
     public readonly identifier: Token | undefined;
 
+    // Parses starting *after* the tag open.
     constructor(tokens: Token[]) {
         super();
         if (
-            !this.match(tokens, TokenKind.TagOpen) ||
             !(this.identifier = this.match(tokens, TokenKind.Identifier)) ||
             !this.match(tokens, TokenKind.TagClose)
         ) {
