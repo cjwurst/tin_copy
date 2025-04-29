@@ -1,4 +1,4 @@
-# Tin Syntax
+# TinCopy Syntax
 
 Rocky, Erin, Auren, Amira, Suko, Ben, Joanna
 
@@ -6,7 +6,7 @@ Portland Tech Calendar
 
 ## Key
 
-Tin's grammar specification is based on extended Backus-Naur form.
+Tin's grammar specification is based on extended Backus-Naur form:
 
 | Pattern | Meaning |
 | ------- | ------- |
@@ -17,6 +17,15 @@ Tin's grammar specification is based on extended Backus-Naur form.
 | \[...\] | None or one |
 | \{...\} | One or more |
 | \[\{...\}\] | None or more |
+
+<!-- 
+    Changes to the grammar should be reflected in...
+
+    the constructor for each `SyntaxTree` subclass,
+    the recursion in each `Visitor` subclass, and
+    the well-formed token sequence arbitrary in 'syntaxTreeArbs.ts'.
+-->
+## Grammar
 
 document =
     | textExpr 'eof'

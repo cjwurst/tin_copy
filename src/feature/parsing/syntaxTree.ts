@@ -8,22 +8,22 @@ import { Token, TokenKind } from "../lexing/scanner";
  * A concrete visitor extends either the `Visitor` or `UniformVisitor` 
  * subclasses, depending on how it acts on the different nodes of a tree.
  */
-abstract class BaseVisitor {
-    public abstract visitTinDoc(document: TinDoc): void;
-    public abstract visitTextExpr(textExpr: TextExpr): void;
-    public abstract visitEOF(eof: EOF): void;
-    public abstract visitVariableTag(variableTag: VariableTag): void;
+abstract class Visitor<T> {
+    public abstract visitTinDoc(document: TinDoc): T;
+    public abstract visitTextExpr(textExpr: TextExpr): T;
+    public abstract visitEOF(eof: EOF): T;
+    public abstract visitVariableTag(variableTag: VariableTag): T;
 
-    protected abstract visit(node: SyntaxTree): void;
+    protected abstract visit(node: SyntaxTree): T;
 }
 
 /**
  * A visitor to a syntax tree which distinguishes between different types of
  * nodes.
  */
-export abstract class Visitor extends BaseVisitor{
+export abstract class PiecewiseVisitor<T> extends Visitor<T> {
     /** @override */
-    protected visit(node: SyntaxTree): void {
+    protected visit(node: SyntaxTree): T {
         return node.accept(this);
     }
 }
@@ -31,25 +31,25 @@ export abstract class Visitor extends BaseVisitor{
 /**
  * A visitor which treats all subtypes of `SyntaxTree` the same.
  */
-export abstract class UniformVisitor extends Visitor {
+export abstract class UniformVisitor<T> extends Visitor<T> {
     /** @override */
-    public visitTinDoc(document: TinDoc): void {
-        this.visit(document);
+    public visitTinDoc(document: TinDoc): T {
+        return this.visit(document);
     }
 
     /** @override */
-    public visitTextExpr(textExpr: TextExpr): void {
-        this.visit(textExpr);
+    public visitTextExpr(textExpr: TextExpr): T {
+        return this.visit(textExpr);
     }
 
     /** @override */
-    public visitEOF(eof: EOF): void {
-        this.visit(eof);
+    public visitEOF(eof: EOF): T {
+        return this.visit(eof);
     }
 
     /** @override */
-    public visitVariableTag(variableTag: VariableTag): void {
-        this.visit(variableTag);
+    public visitVariableTag(variableTag: VariableTag): T {
+        return this.visit(variableTag);
     }
 }
 
@@ -80,21 +80,34 @@ export abstract class SyntaxTree {
      * 
      * @abstract
      */
-    public abstract accept(visitor: Visitor): void;
+    public abstract accept<T>(visitor: Visitor<T>): T;
 
     /**
-     * Pass a visitor to be accepted by children. 
+     * Pass a visitor to be accepted by children as a catamorphism over the tree.
+     * 
+     * @param visitor - The visitor to accept
+     * @param initial - The initial value
+     * @param accumulate - The operation which takes the accumulated value and 
+     * a value from the tree and returns a new accumulated value.
+     * 
+     * @returns The result of accumulating `initial` by `op` over the tree.
      * 
      * @remarks 
      * This function can be used to recursively visit an entire tree
      * if recursion is unconditional and orders children uniformly. Otherwise, 
      * the visitor can manually call `accept` on the nodes' members.
      */
-    public acceptToChildren(visitor: Visitor): void {
+    public acceptToChildren<T>(
+        visitor: Visitor<T>, 
+        initial: T,
+        accumulate: (init: T, next: T) => T = (i, _) => i, 
+    ): T {
+        let result = initial;
         const children = this.children;
         for (let i = 0; i < children.length; i++) {
-            children[i].accept(visitor);
+            result = accumulate(initial, children[i].accept(visitor));
         }
+        return result;
     }
 
     public abstract get children(): SyntaxTree[];
@@ -151,8 +164,8 @@ export class TinDoc extends SyntaxTree {
     }
 
     /** @override */
-    public accept(visitor: Visitor): void {
-        visitor.visitTinDoc(this);
+    public accept<T>(visitor: Visitor<T>): T {
+        return visitor.visitTinDoc(this);
     }
 }
 
@@ -184,8 +197,8 @@ export class TextExpr extends SyntaxTree {
     }
 
     /** @override */
-    public accept(visitor: Visitor): void {
-        visitor.visitTextExpr(this);
+    public accept<T>(visitor: Visitor<T>): T {
+        return visitor.visitTextExpr(this);
     }
 }
 
@@ -202,8 +215,8 @@ export class EOF extends SyntaxTree {
     }
 
     /** @override */
-    public accept(visitor: Visitor): void {
-        visitor.visitEOF(this);
+    public accept<T>(visitor: Visitor<T>): T {
+        return visitor.visitEOF(this);
     }
 }
 
@@ -227,7 +240,7 @@ export class VariableTag extends SyntaxTree {
     }
 
     /** @override */
-    public accept(visitor: Visitor): void {
-        visitor.visitVariableTag(this);
+    public accept<T>(visitor: Visitor<T>): T {
+        return visitor.visitVariableTag(this);
     }
 }

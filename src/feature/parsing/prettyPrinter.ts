@@ -6,7 +6,8 @@ export default function toPrettyString(root: syn.SyntaxTree): string {
 
 const MARGIN_INCREMENT = 2;
 
-class PrettyPrinter extends syn.Visitor {
+// TODO: Change this to a PiecewiseVisitor of type 'string'.
+class PrettyPrinter extends syn.PiecewiseVisitor<void> {
     private result: string = '';
 
     private marginWidth: number = 0;
