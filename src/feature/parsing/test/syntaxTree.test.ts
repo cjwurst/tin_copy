@@ -1,6 +1,6 @@
 import { test } from '@fast-check/vitest';
 import { expect } from 'vitest';
-import * as syn from '../../../syntaxTree';
+import * as syn from '../../../common/syntaxTree';
 import * as arb from './syntaxTreeArbs';
 import { TokenKind } from '../../lexing/scanner';
 import structuresMatch from '../treeMatcher';
@@ -26,6 +26,7 @@ test.prop(arb.getTokenArbs(
 ))('should parse a sequence of variable tags and text blocks', 
     (...tokens) => {
         let ast = syn.SyntaxTree.parseFromTokens(tokens);
+        // TODO: Implement this test
         expect(structuresMatch(ast, ast));
     }
 );

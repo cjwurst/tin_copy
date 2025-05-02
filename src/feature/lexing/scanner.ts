@@ -208,6 +208,7 @@ class Scanner {
     }
 
     private error(message: string) {
+        // TODO
         this.addToken(TokenKind.Bad);
         //console.log(message + ' at ' + this.line + ':' + this.iChar + '.');
     }

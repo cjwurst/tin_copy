@@ -1,4 +1,4 @@
-import * as syn from '../../syntaxTree'
+import * as syn from '../../common/syntaxTree'
 
 export default function toPrettyString(root: syn.SyntaxTree): string {
     return new PrettyPrinter(root).toPrettyString();

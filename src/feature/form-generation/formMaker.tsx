@@ -1,6 +1,6 @@
 import React from 'react';
-import * as syn from '../../syntaxTree';
-import { TinContext, TinValue } from '../../tinContext.ts';
+import * as syn from '../../common/syntaxTree.ts';
+import { TinContext, TinValue } from '../../common/tinContext.ts';
 import { Token } from '../lexing/scanner.ts';
 
 /**
@@ -9,9 +9,9 @@ import { Token } from '../lexing/scanner.ts';
 export default function makeForm(
     root: syn.SyntaxTree, 
     context: TinContext, 
-    setContext: (s: string, v: TinValue) => void
+    setVariable: (s: string, v: TinValue) => void
 ): React.ReactNode {
-    return new FormMaker(context, setContext).makeForm(root);
+    return new FormMaker(context, setVariable).makeForm(root);
 }
 
 class FormMaker extends syn.PiecewiseVisitor<React.ReactNode> {
@@ -67,15 +67,15 @@ class FormMaker extends syn.PiecewiseVisitor<React.ReactNode> {
                     }}
                 />
                 break;
-                
+
             case typeof 0:
                 return <>TODO</>; // TODO
-                
+
             case typeof true:
                 return <>TODO</>; // TODO
-                
+
             default:
-                // TODO check attributes for type
+                // TODO This should probably happen in a separate pass over the AST.
                 this.setVariable(name, new TinValue(''));
                 return <></>;
         }

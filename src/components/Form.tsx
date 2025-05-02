@@ -1,11 +1,10 @@
-import * as syn from './syntaxTree.ts';
-import makeForm from './feature/form-generation/formMaker.tsx';
-import { TinContext, TinValue } from './tinContext.ts';
+import * as syn from '../common/syntaxTree.ts';
+import makeForm from '../feature/form-generation/formMaker.tsx';
+import { TinContext, TinValue } from '../common/tinContext.ts';
 import { useState } from 'react';
 
 export type FormProps = { 
-    root: syn.SyntaxTree,
-    context: TinContext
+    root: syn.SyntaxTree
 };
 
 export function Form({ root }: FormProps): React.ReactNode {

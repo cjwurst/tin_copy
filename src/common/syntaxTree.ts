@@ -1,4 +1,4 @@
-import { Token, TokenKind } from "./feature/lexing/scanner";
+import { Token, TokenKind } from "../feature/lexing/scanner";
 
 /**
  * A visitor to a syntax tree, as in the visitor pattern. Provides a unified 
@@ -57,6 +57,10 @@ export type SyntaxError = {
     message: string
 }
 
+export function parse(tokens: Token[]): SyntaxTree {
+    return SyntaxTree.parseFromTokens(tokens);
+}
+
 /**
  * An abstract syntax tree node.
  */
@@ -69,6 +73,7 @@ export abstract class SyntaxTree {
         /* Here the token queue is reversed, so that tokens can be removed in 
         constant time. We could use a different data structure to avoid the 
         linear time `reverse` call, but I don't think it will matter. */
+        // TODO: Decide if this is a good approach.
         return new TinDoc(tokens.reverse());
     }
 
