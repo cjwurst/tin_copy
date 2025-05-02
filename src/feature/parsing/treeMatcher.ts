@@ -1,4 +1,4 @@
-import * as syn from './syntaxTree';
+import * as syn from '../../syntaxTree';
 import { Token } from '../lexing/scanner';
 
 /**
@@ -12,6 +12,7 @@ export default function structuresMatch(
     return matcher.compare(root2);
 }
 
+// TODO: Change this to a UniformVisitor.
 class TreeMatcher extends syn.PiecewiseVisitor<boolean> {
     private current: any;
 

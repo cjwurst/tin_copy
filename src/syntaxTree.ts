@@ -1,11 +1,11 @@
-import { Token, TokenKind } from "../lexing/scanner";
+import { Token, TokenKind } from "./feature/lexing/scanner";
 
 /**
  * A visitor to a syntax tree, as in the visitor pattern. Provides a unified 
  * interface between visitors and subclasses of `SyntaxTree`.
  * 
  * @remarks
- * A concrete visitor extends either the `Visitor` or `UniformVisitor` 
+ * A concrete visitor extends either the `PiecewiseVisitor` or `UniformVisitor` 
  * subclasses, depending on how it acts on the different nodes of a tree.
  */
 abstract class Visitor<T> {
@@ -63,6 +63,7 @@ export type SyntaxError = {
 export abstract class SyntaxTree {
     private m_errors: SyntaxError[] = [];
     public get errors(): readonly SyntaxError[] { return this.m_errors; }
+    public get isGood(): boolean { return this.m_errors.length > 0; } 
 
     public static parseFromTokens(tokens: Token[]): SyntaxTree {
         /* Here the token queue is reversed, so that tokens can be removed in 
@@ -176,12 +177,15 @@ export class TextExpr extends SyntaxTree {
     public readonly content: string | VariableTag = '';
     public readonly tail: TextExpr | undefined;
 
+    private readonly isLiteral: boolean = false;
+
     constructor(tokens: Token[]) {
         super();
         let token: Token | undefined;
         if (token = this.match(tokens, TokenKind.Text)) {
             this.content = token.lexeme;
             this.tail = new TextExpr(tokens);
+            this.isLiteral = true;
         } else if (token = this.match(tokens, TokenKind.TagOpen)) {
             this.content = new VariableTag(tokens);
             this.tail = new TextExpr(tokens);
@@ -194,6 +198,26 @@ export class TextExpr extends SyntaxTree {
             this.content instanceof VariableTag? [this.content] : [];
         const tailArray = this.tail? [this.tail] : [];
         return contentArray.concat(tailArray);
+    }
+
+    public get literal(): string | undefined {
+        if (this.isLiteral) 
+            return this.content as string;
+        return undefined;
+    }
+
+    public get variable(): VariableTag | undefined {
+        if (!this.isLiteral) 
+            return this.content as VariableTag;
+        return undefined;
+    }
+
+    public tryGetLiteral(result: { literal: string }): boolean {
+        if (this.isLiteral) {
+            result.literal = this.content as string;
+            return true;
+        }
+        return false;
     }
 
     /** @override */
