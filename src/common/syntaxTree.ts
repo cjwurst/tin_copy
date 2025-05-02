@@ -1,61 +1,5 @@
 import { Token, TokenKind } from "../feature/lexing/scanner";
-
-/**
- * A visitor to a syntax tree, as in the visitor pattern. Provides a unified 
- * interface between visitors and subclasses of `SyntaxTree`.
- * 
- * @remarks
- * A concrete visitor extends either the `PiecewiseVisitor` or `UniformVisitor` 
- * subclasses, depending on how it acts on the different nodes of a tree.
- */
-abstract class Visitor<T> {
-    public abstract visitTinDoc(document: TinDoc): T;
-    public abstract visitTextExpr(textExpr: TextExpr): T;
-    public abstract visitEOF(eof: EOF): T;
-    public abstract visitVariableTag(variableTag: VariableTag): T;
-
-    protected abstract visit(node: SyntaxTree): T;
-}
-
-/**
- * A visitor to a syntax tree which distinguishes between different types of
- * nodes.
- */
-export abstract class PiecewiseVisitor<T> extends Visitor<T> {
-    /** @override */
-    protected visit(node: SyntaxTree): T {
-        return node.accept(this);
-    }
-}
-
-/**
- * A visitor which treats all subtypes of `SyntaxTree` the same.
- */
-export abstract class UniformVisitor<T> extends Visitor<T> {
-    /** @override */
-    public visitTinDoc(document: TinDoc): T {
-        return this.visit(document);
-    }
-
-    /** @override */
-    public visitTextExpr(textExpr: TextExpr): T {
-        return this.visit(textExpr);
-    }
-
-    /** @override */
-    public visitEOF(eof: EOF): T {
-        return this.visit(eof);
-    }
-
-    /** @override */
-    public visitVariableTag(variableTag: VariableTag): T {
-        return this.visit(variableTag);
-    }
-}
-
-export type SyntaxError = {
-    message: string
-}
+import { Visitor } from "./visitor";
 
 export function parse(tokens: Token[]): SyntaxTree {
     return SyntaxTree.parseFromTokens(tokens);
@@ -96,7 +40,7 @@ export abstract class SyntaxTree {
      * @param accumulate - The operation which takes the accumulated value and 
      * a value from the tree and returns a new accumulated value.
      * 
-     * @returns The result of accumulating `initial` by `op` over the tree.
+     * @returns The result of accumulating `initial` by `accumulate` over the tree.
      * 
      * @remarks 
      * This function can be used to recursively visit an entire tree
@@ -272,4 +216,8 @@ export class VariableTag extends SyntaxTree {
     public accept<T>(visitor: Visitor<T>): T {
         return visitor.visitVariableTag(this);
     }
+}
+
+export type SyntaxError = {
+    message: string
 }

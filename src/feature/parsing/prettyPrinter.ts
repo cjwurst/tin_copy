@@ -1,3 +1,4 @@
+import { PiecewiseVisitor } from '../../common/visitor';
 import * as syn from '../../common/syntaxTree'
 
 export default function toPrettyString(root: syn.SyntaxTree): string {
@@ -7,7 +8,7 @@ export default function toPrettyString(root: syn.SyntaxTree): string {
 const MARGIN_INCREMENT = 2;
 
 // TODO: Change this to a PiecewiseVisitor of type 'string'.
-class PrettyPrinter extends syn.PiecewiseVisitor<void> {
+class PrettyPrinter extends PiecewiseVisitor<void> {
     private result: string = '';
 
     private marginWidth: number = 0;

@@ -1,4 +1,5 @@
 import * as syn from '../../common/syntaxTree';
+import { UniformVisitor } from '../../common/visitor';
 
 export type ErrorReport = {
     count: number,
@@ -9,25 +10,33 @@ export type ErrorReport = {
  * Report syntax errors encountered during the parsing of a syntax tree.
  */
 export default function reportErrors(root: syn.SyntaxTree): ErrorReport {
-    const reporter = new ErrorReporter();
-    root.accept(reporter);
-    return reporter.report;
+    return new ErrorReporter().reportOn(root);
 }
 
 /* If we discover later that error reporting should branch differently than
 parsing recovery, we can reimplement this class as a `syn.Visitor` and treat
 each node based on its concrete type. */
-class ErrorReporter extends syn.UniformVisitor {
-    public report:ErrorReport = { count: 0, message: ''};
+class ErrorReporter extends UniformVisitor<ErrorReport> {
+    public reportOn(root: syn.SyntaxTree): ErrorReport {
+        return root.acceptToChildren(
+            this, 
+            { count: 0, message: ''}, 
+            (init, next) => { return {
+                count: init.count + next.count,
+                message: init.message + next.message
+            }}
+        );
+    }
 
     /** @override */
-    protected visit(node: syn.SyntaxTree): void {
+    protected visit(node: syn.SyntaxTree): ErrorReport {
         const errors = node.errors;
+        let report = { count: 0, message: ''};
         if (errors.length > 0)
-            this.report.message += errors
+            report.message += errors
                 .map((e) => e.message)
                 .join('\n') + '\n';
-        this.report.count += errors.length;
-        node.acceptToChildren(this);
+        report.count += errors.length;
+        return report;
     }
 }

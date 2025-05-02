@@ -1,11 +1,12 @@
 import { test } from '@fast-check/vitest';
 import { expect } from 'vitest';
 import * as syn from '../../../common/syntaxTree';
-import * as arb from './syntaxTreeArbs';
+import * as arb from './parsingArbs';
+import { wellFormedParseArb } from './parsingArbs';
+import { getTokenArbs } from '../../../common/test/syntaxArbs';
 import { TokenKind } from '../../lexing/scanner';
-import structuresMatch from '../treeMatcher';
 
-test.prop([arb.wellFormedParseArb], { 
+test.prop([wellFormedParseArb], { 
     verbose: 2, 
     reporter: arb.syntaxErrorReporter
 })(
@@ -15,7 +16,7 @@ test.prop([arb.wellFormedParseArb], {
     }
 );
 
-test.prop(arb.getTokenArbs(
+test.prop(getTokenArbs(
     TokenKind.Text,
     TokenKind.Text,
     TokenKind.TagOpen,
@@ -27,6 +28,5 @@ test.prop(arb.getTokenArbs(
     (...tokens) => {
         let ast = syn.SyntaxTree.parseFromTokens(tokens);
         // TODO: Implement this test
-        expect(structuresMatch(ast, ast));
     }
 );

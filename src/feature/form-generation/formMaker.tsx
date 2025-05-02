@@ -2,6 +2,7 @@ import React from 'react';
 import * as syn from '../../common/syntaxTree.ts';
 import { TinContext, TinValue } from '../../common/tinContext.ts';
 import { Token } from '../lexing/scanner.ts';
+import { PiecewiseVisitor } from '../../common/visitor.ts';
 
 /**
  * Make a form from the root of a syntax tree.
@@ -14,7 +15,7 @@ export default function makeForm(
     return new FormMaker(context, setVariable).makeForm(root);
 }
 
-class FormMaker extends syn.PiecewiseVisitor<React.ReactNode> {
+class FormMaker extends PiecewiseVisitor<React.ReactNode> {
     constructor(
         private readonly context: TinContext,
         private readonly setVariable: (s: string, v: TinValue) => void
@@ -26,6 +27,7 @@ class FormMaker extends syn.PiecewiseVisitor<React.ReactNode> {
         return this.visit(root);
     }
 
+    /** @override */
     public visitTinDoc(document: syn.TinDoc): React.ReactNode {
         return <div>
             Start of form!
@@ -33,6 +35,7 @@ class FormMaker extends syn.PiecewiseVisitor<React.ReactNode> {
         </div>;
     }
 
+    /** @override */
     public visitTextExpr(textExpr: syn.TextExpr): React.ReactNode {
         let variableTag = textExpr.variable;
         let children = textExpr.tail? 
@@ -43,12 +46,14 @@ class FormMaker extends syn.PiecewiseVisitor<React.ReactNode> {
             children;
     }
 
+    /** @override */
     public visitEOF(_: syn.EOF): React.ReactNode {
         return <>
             End of form!
         </>;
     }
 
+    /** @override */
     public visitVariableTag(variableTag: syn.VariableTag): React.ReactNode {
         if (!variableTag.isGood) return <></>;
         
