@@ -1,25 +1,30 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig({
     plugins: [
-      react(),
-      viteStaticCopy({
-        targets: [
-          {
-            src: 'public/manifest.json',
-            dest: '.',
-          }
-        ],
-      }),
+        react(),
+        viteStaticCopy({
+            targets: [
+                {
+                    src: 'public/manifest.json',
+                    dest: '.',
+                }
+            ],
+        }),
     ],
-    build: {
-      outDir: 'build',
-      rollupOptions: {
-        input: {
-          main: './index.html',
-        },
-      },
+    test: {
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: './testSetup.ts'
     },
-  });
+    build: {
+        outDir: 'build',
+        rollupOptions: {
+            input: {
+                main: './index.html',
+            },
+        },
+    },
+});
