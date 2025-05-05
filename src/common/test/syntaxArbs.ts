@@ -1,6 +1,23 @@
 import { fc } from '@fast-check/vitest';
 import { Token, TokenKind } from '../../feature/lexing/scanner';
 import { badTokenArb, tokenArb } from '../../feature/lexing/test/scannerArbs';
+import { SyntaxTree } from '../syntaxTree';
+import reportErrors, { ErrorReport } from '../../feature/errorReporter';
+import parse from '../../feature/parsing/parser';
+
+export class ParseResult { 
+    constructor(
+        public readonly tokens: readonly Token[],
+        public readonly root: SyntaxTree,
+        public readonly errorReport: ErrorReport
+    ) {}
+
+    public toString(): string {
+        return '\n' + this.tokens
+            .map((t) => '    ' + t.toString())
+            .join('\n') + '\n  ';
+    }
+};
 
 /* Casting is necessary throughout this definition since the return type of 
 `tie` is `fc.Arbitrary<unknown>` */
@@ -25,6 +42,11 @@ fc.letrec((tie) => ({
         TokenKind.TagOpen, TokenKind.Identifier, TokenKind.TagClose
     ))
 })).document;
+
+export const wellFormedParseArb:fc.Arbitrary<ParseResult> = wellFormedTokensArb.map((tokens) => {
+    const root = parse(tokens.slice());
+    return new ParseResult(tokens, root, reportErrors(root));
+});
 
 export function getTokenArb(kind: TokenKind): fc.Arbitrary<Token> {
     return tokenArb.get(kind)?? badTokenArb;

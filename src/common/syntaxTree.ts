@@ -1,10 +1,6 @@
 import { Token, TokenKind } from "../feature/lexing/scanner";
 import { Visitor } from "./visitor";
 
-export function parse(tokens: Token[]): SyntaxTree {
-    return SyntaxTree.parseFromTokens(tokens);
-}
-
 /**
  * An abstract syntax tree node.
  */
@@ -12,14 +8,6 @@ export abstract class SyntaxTree {
     private m_errors: SyntaxError[] = [];
     public get errors(): readonly SyntaxError[] { return this.m_errors; }
     public get isGood(): boolean { return this.m_errors.length > 0; } 
-
-    public static parseFromTokens(tokens: Token[]): SyntaxTree {
-        /* Here the token queue is reversed, so that tokens can be removed in 
-        constant time. We could use a different data structure to avoid the 
-        linear time `reverse` call, but I don't think it will matter. */
-        // TODO: Decide if this is a good approach.
-        return new TinDoc(tokens.reverse());
-    }
 
     /** 
      * Accept a visitor, dispatching over the concrete type of `this`. 

@@ -7,7 +7,7 @@ export type FormProps = {
     root: syn.SyntaxTree
 };
 
-export function Form({ root }: FormProps): React.ReactNode {
+export default function Form({ root }: FormProps): React.ReactNode {
     const [context, setContext] = useState(new TinContext());
     const setVariable = (name: string, value: TinValue) => {
         setContext((oldContext) => oldContext.copyWithChange(name, value));

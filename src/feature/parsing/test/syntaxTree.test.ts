@@ -1,8 +1,8 @@
 import { test } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
-import * as syn from '../../../common/syntaxTree';
-import * as arb from './parsingArbs';
-import { wellFormedParseArb } from './parsingArbs';
+import parse from '../parser';
+import * as arb from './syntaxErrorReporter';
+import { wellFormedParseArb } from '../../../common/test/syntaxArbs';
 import { getTokenArbs } from '../../../common/test/syntaxArbs';
 import { TokenKind } from '../../lexing/scanner';
 
@@ -27,7 +27,7 @@ describe('Parser', () => {
         TokenKind.EOF
     ))('should parse a sequence of variable tags and text blocks', 
         (...tokens) => {
-            let ast = syn.SyntaxTree.parseFromTokens(tokens);
+            let ast = parse(tokens);
             // TODO: Implement this test
         }
     );

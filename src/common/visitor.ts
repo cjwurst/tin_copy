@@ -30,6 +30,11 @@ export abstract class PiecewiseVisitor<T> extends Visitor<T> {
 
 /**
  * A visitor which treats all subtypes of `SyntaxTree` the same.
+ * 
+ * @remarks
+ * These classes could be implemented as `SyntaxTree` methods. A "visitor-like" 
+ * pattern is used instead for consistency with `PiecewiseVisitor` and for 
+ * separation of concerns.
  */
 export abstract class UniformVisitor<T> extends Visitor<T> {
     /** @override */
