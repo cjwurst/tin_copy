@@ -31,7 +31,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
     public visitTinDoc(document: syn.TinDoc): React.ReactNode {
         return <div>
             Start of form!
-            { this.visitTextExpr(document.content) }
+            <>{ this.visitTextExpr(document.content) }</>
         </div>;
     }
 
