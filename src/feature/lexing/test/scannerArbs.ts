@@ -24,3 +24,9 @@ export const tokenArb = new Map<
     )],
     [TokenKind.Bad, badTokenArb]
 ]);
+
+export const symbolArb = fc.constantFrom(
+    ...Object.values(TinSymbol).map((s) => s as string)
+);
+
+export const sourceArb = fc.array(symbolArb).map((l) => l.join(''));
