@@ -31,19 +31,17 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
     public visitTinDoc(document: syn.TinDoc): React.ReactNode {
         return <div>
             Start of form!
-            <>{ this.visitTextExpr(document.content) }</>
+            { this.visitTextExpr(document.content) }
         </div>;
     }
 
     /** @override */
     public visitTextExpr(textExpr: syn.TextExpr): React.ReactNode {
-        let variableTag = textExpr.variable;
-        let children = textExpr.tail? 
-            this.visitTextExpr(textExpr.tail) : 
-            <></>;
-        return variableTag? 
-            [this.visitVariableTag(variableTag), children] : 
-            children;
+        const variableTag = textExpr.variable;
+        return <> 
+            { variableTag? this.visitVariableTag(variableTag) :<></> }
+            { textExpr.tail? this.visitTextExpr(textExpr.tail) : <></> }
+        </>;
     }
 
     /** @override */
