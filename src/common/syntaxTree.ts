@@ -7,7 +7,7 @@ import { Visitor } from "./visitor";
 export abstract class SyntaxTree {
     private m_errors: SyntaxError[] = [];
     public get errors(): readonly SyntaxError[] { return this.m_errors; }
-    public get isGood(): boolean { return this.m_errors.length > 0; } 
+    public get isGood(): boolean { return this.m_errors.length == 0; } 
 
     /** 
      * Accept a visitor, dispatching over the concrete type of `this`. 

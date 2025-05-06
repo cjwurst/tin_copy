@@ -29,10 +29,11 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
 
     /** @override */
     public visitTinDoc(document: syn.TinDoc): React.ReactNode {
-        return <div>
+        return <>
             Start of form!
             { this.visitTextExpr(document.content) }
-        </div>;
+            { this.visitEOF(document.eof) }
+        </>;
     }
 
     /** @override */
