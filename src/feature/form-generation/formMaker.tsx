@@ -57,8 +57,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
         
         const name = (variableTag.identifier as Token).lexeme;
         const value = this.context.tryGet(name);
-
-        switch (typeof value) {
+        switch (typeof value?.content) {
             case typeof '':
                 return <input 
                     type='text' 

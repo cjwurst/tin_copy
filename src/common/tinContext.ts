@@ -19,10 +19,10 @@ export class TinContext {
  * This is just a sum type with some helper functions.
  */
 export class TinValue {
-    public readonly value: string | boolean | number;
+    public readonly content: string | boolean | number;
 
-    constructor(value: string | boolean | number) {
-        this.value = value;
+    constructor(content: string | boolean | number) {
+        this.content = content;
     }
 
     public asString(): string {
@@ -38,6 +38,6 @@ export class TinValue {
     }
 
     private asType(typeName: string): string | boolean | number | undefined {
-        return (typeof this.value == typeName)? this.value : undefined;
+        return (typeof this.content == typeName)? this.content : undefined;
     }
 }
