@@ -19,7 +19,7 @@ export const tokenArb = new Map<
     [TokenKind.EOF, fc.constant(new Token(
         '', TokenKind.EOF, 0, 0
     ))],
-    [TokenKind.Identifier, fc.string().map((s) => 
+    [TokenKind.Identifier, fc.string().filter((s) => s.length > 0).map((s) => 
         new Token(s, TokenKind.Identifier, 0, 0)
     )],
     [TokenKind.Bad, badTokenArb]
