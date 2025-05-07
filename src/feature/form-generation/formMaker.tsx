@@ -63,7 +63,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
                 return <input 
                     type='text' 
                     // TODO: Convert from lower camel case to spaces
-                    name={name}
+                    placeholder={name}
                     value={value?.asString()}
                     onChange={e => { 
                         this.setVariable(name, new TinValue(e.target.value)) 
