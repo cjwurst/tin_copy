@@ -1,7 +1,6 @@
 import React from 'react';
 import * as syn from '../../common/syntaxTree.ts';
 import { TinContext, TinValue } from '../../common/tinContext.ts';
-import { Token } from '../lexing/scanner.ts';
 import { PiecewiseVisitor } from '../../common/visitor.ts';
 
 /**
@@ -56,7 +55,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
     public visitVariableTag(variableTag: syn.VariableTag): React.ReactNode {
         if (!variableTag.isGood) return <></>;
         
-        const name = (variableTag.identifier as Token).lexeme;
+        const name = variableTag.name?? 'MISSING_NAME';
         const value = this.context.tryGet(name);
         switch (typeof value?.content) {
             case typeof '':
@@ -64,7 +63,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
                     type='text' 
                     // TODO: Convert from lower camel case to spaces
                     placeholder={name}
-                    value={value?.asString()}
+                    value={value?.asString()}   // TODO: Guard against type coersion.
                     onChange={e => { 
                         this.setVariable(name, new TinValue(e.target.value)) 
                     }}
@@ -79,7 +78,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
 
             default:
                 // TODO This should probably happen in a separate pass over the AST.
-                this.setVariable(name, new TinValue(''));
+                this.setVariable(name, new TinValue('')); 
                 return <></>;
         }
     }

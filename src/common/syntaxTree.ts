@@ -200,6 +200,10 @@ export class VariableTag extends SyntaxTree {
         return [];
     }
 
+    public get name(): string | undefined {
+        return this.identifier? this.identifier.lexeme : undefined;
+    }
+
     /** @override */
     public accept<T>(visitor: Visitor<T>): T {
         return visitor.visitVariableTag(this);
