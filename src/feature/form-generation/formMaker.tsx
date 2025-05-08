@@ -1,7 +1,8 @@
 import React from 'react';
-import * as syn from '../../common/syntaxTree.ts';
-import { TinContext, TinValue } from '../../common/tinContext.ts';
-import { PiecewiseVisitor } from '../../common/visitor.ts';
+import * as syn from '../../common/syntaxTree';
+import { makeTinValue, TinContext, TinValue } from '../../common/tinContext';
+import { PiecewiseVisitor } from '../../common/visitor';
+import { isNever } from '../../common/staticAssertion';
 
 /**
  * Make a form from the root of a syntax tree.
@@ -37,9 +38,19 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
 
     /** @override */
     public visitTextExpr(textExpr: syn.TextExpr): React.ReactNode {
-        const variableTag = textExpr.variable;
+        const content = textExpr.content;
+        let input: React.ReactNode = <></>;
+        switch (content.kind) {
+            case 'string':
+                break;
+            case 'variable':
+                input = this.visitVariableTag(content.value);
+                break;
+            default:
+                isNever(content);
+        }
         return <> 
-            { variableTag? this.visitVariableTag(variableTag) :<></> }
+            { input }
             { textExpr.tail? this.visitTextExpr(textExpr.tail) : <></> }
         </>;
     }
@@ -53,33 +64,36 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
 
     /** @override */
     public visitVariableTag(variableTag: syn.VariableTag): React.ReactNode {
-        if (!variableTag.isGood) return <></>;
+        if (!variableTag.isGood || !variableTag.name) return <></>;
         
-        const name = variableTag.name?? 'MISSING_NAME';
+        const name = variableTag.name;
         const value = this.context.tryGet(name);
-        switch (typeof value?.content) {
-            case typeof '':
+        if (!value) {
+            if (name) {
+                // TODO This should maybe happen in a separate pass over the AST?
+                this.setVariable(name, makeTinValue(''));
+            }
+            return <></>;
+        }
+
+        switch (value.kind) {
+            case 'string':
                 return <input 
                     type='text' 
-                    // TODO: Convert from lower camel case to spaces
+                    // TODO: Convert from lower camel case to spaces?
                     placeholder={name}
-                    value={value?.asString()}   // TODO: Guard against type coersion.
+                    value={value.content}
                     onChange={e => { 
-                        this.setVariable(name, new TinValue(e.target.value)) 
+                        this.setVariable(name, makeTinValue(e.target.value));
                     }}
                 />
-                break;
 
-            case typeof 0:
+            case 'number':
                 return <>TODO</>; // TODO
 
-            case typeof true:
+            case 'boolean':
                 return <>TODO</>; // TODO
-
-            default:
-                // TODO This should probably happen in a separate pass over the AST.
-                this.setVariable(name, new TinValue('')); 
-                return <></>;
         }
+        isNever(value);
     }
 }

@@ -7,37 +7,52 @@ export class TinContext {
         return context;
     }
 
-    public tryGet(name: string): TinValue | undefined {
-        return this.varByName.get(name);
+    public tryGet(name: string | undefined): TinValue | undefined {
+        return name? this.varByName.get(name) : undefined;
     }
 }
 
-/**
- * A value that a TinCopy expression can take. 
- * 
- * @remarks
- * This is just a sum type with some helper functions.
- */
-export class TinValue {
-    public readonly content: string | boolean | number;
+export function makeTinValue(x: boolean | number | string): TinValue {
+    switch(typeof x) {
+        case typeof true:
+            return {
+                kind: 'boolean',
+                content: <boolean>x
+            }
 
-    constructor(content: string | boolean | number) {
-        this.content = content;
-    }
+        case typeof 1:
+            return {
+                kind: 'number',
+                content: <number>x
+            }
 
-    public asString(): string {
-        return <string>this.asType(typeof '');
-    }
+        case typeof '':
+            return {
+                kind: 'string',
+                content: <string>x
+            }
 
-    public asBoolean(): boolean {
-        return <boolean>this.asType(typeof true);
+        default:
+            throw new Error('Signature of `makeTinValue` malformed.');
     }
+}
 
-    public asNumber(): number {
-        return <number>this.asType(typeof 0);
-    }
+export type TinValue = 
+    | TinString
+    | TinBoolean
+    | TinNumber
 
-    private asType(typeName: string): string | boolean | number | undefined {
-        return (typeof this.content == typeName)? this.content : undefined;
-    }
+type TinString = {
+    kind: 'string',
+    content: string
+}
+
+type TinBoolean = {
+    kind: 'boolean',
+    content: boolean
+}
+
+type TinNumber = {
+    kind: 'number',
+    content: number
 }

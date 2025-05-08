@@ -1,0 +1,1 @@
+export function isNever(_: never): never { throw new Error(); }

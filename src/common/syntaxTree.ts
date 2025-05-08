@@ -45,7 +45,7 @@ export abstract class SyntaxTree {
         let result = initial;
         const children = this.children;
         for (let i = 0; i < children.length; i++) {
-            accumulate(result, children[i].acceptRecursive(
+            result = accumulate(result, children[i].acceptRecursive(
                 visitor, result, accumulate
             ));
         }
@@ -111,24 +111,46 @@ export class TinDoc extends SyntaxTree {
     }
 }
 
+type TextExprContent = 
+    | StringContent
+    | VariableTagContent
+
+type StringContent = {
+    kind: 'string',
+    value: string
+}
+
+type VariableTagContent = {
+    kind: 'variable',
+    value: VariableTag
+}
+
+const defaultTextExprContent: StringContent = {
+    kind: 'string',
+    value: ''
+};
+
 /**
  * A text expression consisting of a list of string literals and variable tags
  */
 export class TextExpr extends SyntaxTree {
-    public readonly content: string | VariableTag = '';
+    public readonly content: TextExprContent = defaultTextExprContent;
     public readonly tail: TextExpr | undefined;
-
-    private readonly isLiteral: boolean = false;
 
     constructor(tokens: Token[]) {
         super();
         let token: Token | undefined;
         if (token = this.match(tokens, TokenKind.Text)) {
-            this.content = token.lexeme;
+            this.content = { 
+                kind: 'string', 
+                value: token.lexeme
+            };
             this.tail = new TextExpr(tokens);
-            this.isLiteral = true;
         } else if (token = this.match(tokens, TokenKind.TagOpen)) {
-            this.content = new VariableTag(tokens);
+            this.content = {
+                kind: 'variable',
+                value: new VariableTag(tokens)
+            }
             this.tail = new TextExpr(tokens);
         }
     }
@@ -139,26 +161,6 @@ export class TextExpr extends SyntaxTree {
             this.content instanceof VariableTag? [this.content] : [];
         const tailArray = this.tail? [this.tail] : [];
         return contentArray.concat(tailArray);
-    }
-
-    public get literal(): string | undefined {
-        if (this.isLiteral) 
-            return this.content as string;
-        return undefined;
-    }
-
-    public get variable(): VariableTag | undefined {
-        if (!this.isLiteral) 
-            return this.content as VariableTag;
-        return undefined;
-    }
-
-    public tryGetLiteral(result: { literal: string }): boolean {
-        if (this.isLiteral) {
-            result.literal = this.content as string;
-            return true;
-        }
-        return false;
     }
 
     /** @override */
