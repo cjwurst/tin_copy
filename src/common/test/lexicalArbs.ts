@@ -1,5 +1,5 @@
 import { fc } from '@fast-check/vitest';
-import { TinSymbol } from '../../feature/lexing/scanner';
+import { TinSymbol } from '../token';
 
 const cleanDoubleLeftBracket = 
     '\\' + TinSymbol.DoubleLeftBracket.split('').join('\\');

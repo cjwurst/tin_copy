@@ -4,7 +4,7 @@ import parse from '../parser';
 import * as arb from './syntaxErrorReporter';
 import { wellFormedParseArb } from '../../../common/test/syntaxArbs';
 import { getTokenArbs } from '../../../common/test/syntaxArbs';
-import { TokenKind } from '../../lexing/scanner';
+import { TokenKind } from '../../../common/token';
 
 describe('Parser', () => {
     test.prop([wellFormedParseArb], { 

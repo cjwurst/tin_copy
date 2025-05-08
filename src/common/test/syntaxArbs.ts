@@ -1,5 +1,5 @@
 import { fc } from '@fast-check/vitest';
-import { Token, TokenKind } from '../../feature/lexing/scanner';
+import { Token, TokenKind } from '../token';
 import { badTokenArb, tokenArb } from '../../feature/lexing/test/scannerArbs';
 import { SyntaxTree } from '../syntaxTree';
 import reportErrors, { ErrorReport } from '../../feature/errorReporter';

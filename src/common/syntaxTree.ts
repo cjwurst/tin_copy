@@ -1,4 +1,4 @@
-import { Token, TokenKind } from "../feature/lexing/scanner";
+import { Token, TokenKind } from './token';
 import { Visitor } from "./visitor";
 
 /**
@@ -21,21 +21,23 @@ export abstract class SyntaxTree {
     public abstract accept<T>(visitor: Visitor<T>): T;
 
     /**
-     * Pass a visitor to be accepted by children as a catamorphism over the tree.
+     * Pass a visitor to be accepted as a catamorphism over the node's 
+     * children.
      * 
      * @param visitor - The visitor to accept
      * @param initial - The initial value
      * @param accumulate - The operation which takes the accumulated value and 
      * a value from the tree and returns a new accumulated value.
      * 
-     * @returns The result of accumulating `initial` by `accumulate` over the tree.
+     * @returns The result of accumulating `initial` by `accumulate` over the 
+     * tree.
      * 
      * @remarks 
-     * This function can be used to recursively visit an entire tree
-     * if recursion is unconditional and orders children uniformly. Otherwise, 
-     * the visitor can manually call `accept` on the nodes' members.
+     * This function can be used to recursively visit an entire tree if the 
+     * visitor orders children uniformly. Otherwise, the visitor can manually 
+     * call `accept` on the nodes' members.
      */
-    public acceptToChildren<T>(
+    public acceptRecursive<T>(
         visitor: Visitor<T>, 
         initial: T,
         accumulate: (init: T, next: T) => T = (i, _) => i, 
@@ -43,7 +45,9 @@ export abstract class SyntaxTree {
         let result = initial;
         const children = this.children;
         for (let i = 0; i < children.length; i++) {
-            result = accumulate(initial, children[i].accept(visitor));
+            accumulate(result, children[i].acceptRecursive(
+                visitor, result, accumulate
+            ));
         }
         return result;
     }

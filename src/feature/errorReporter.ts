@@ -18,13 +18,10 @@ parsing recovery, we can reimplement this class as a `syn.Visitor` and treat
 each node based on its concrete type. */
 class ErrorReporter extends UniformVisitor<ErrorReport> {
     public reportOn(root: syn.SyntaxTree): ErrorReport {
-        return root.acceptToChildren(
+        return root.acceptRecursive(
             this, 
             { count: 0, message: ''}, 
-            (init, next) => { return {
-                count: init.count + next.count,
-                message: init.message + next.message
-            }}
+            combineReports
         );
     }
 
@@ -39,4 +36,11 @@ class ErrorReporter extends UniformVisitor<ErrorReport> {
         report.count += errors.length;
         return report;
     }
+}
+
+function combineReports(first: ErrorReport, second: ErrorReport) {
+    return {
+        count: first.count + second.count,
+        message: first.message + second.message
+    };
 }
