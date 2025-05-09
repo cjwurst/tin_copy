@@ -1,14 +1,16 @@
 export class TinContext {
-    private varByName = new Map<string, TinValue>();
+    private valueByName = new Map<string, TinValue>();
 
     public copyWithChange(name: string, value: TinValue): TinContext {
         let context = new TinContext();
-        context.varByName = new Map<string, TinValue>([...this.varByName, [name, value]]);
+        context.valueByName = new Map<string, TinValue>(
+            [...this.valueByName, [name, value]]
+        );
         return context;
     }
 
     public tryGet(name: string | undefined): TinValue | undefined {
-        return name? this.varByName.get(name) : undefined;
+        return name? this.valueByName.get(name) : undefined;
     }
 }
 
