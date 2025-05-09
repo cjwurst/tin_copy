@@ -1,4 +1,4 @@
-import { Token } from '../lexing/scanner';
+import { Token } from '../../common/token';
 import { SyntaxTree, TinDoc } from '../../common/syntaxTree';
 
 /* I decided that parsing should be part of the construction of a `Syntax
