@@ -2,7 +2,7 @@ import React from 'react';
 import * as syn from '../../common/syntaxTree';
 import { makeTinValue, TinContext, TinValue } from '../../common/tinContext';
 import { PiecewiseVisitor } from '../../common/visitor';
-import { isNever } from '../../common/staticAssertion';
+import * as assert from '../../common/staticAssertion';
 
 /**
  * Make a form from the root of a syntax tree.
@@ -47,7 +47,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
                 input = this.visitVariableTag(content.value);
                 break;
             default:
-                isNever(content);
+                assert.isNever(content);
         }
         return <> 
             { input }
@@ -94,6 +94,6 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
             case 'boolean':
                 return <>TODO</>; // TODO
         }
-        isNever(value);
+        assert.isNever(value);
     }
 }

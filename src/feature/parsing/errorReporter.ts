@@ -1,5 +1,5 @@
-import * as syn from '../common/syntaxTree';
-import { UniformVisitor } from '../common/visitor';
+import * as syn from '../../common/syntaxTree';
+import { UniformVisitor } from '../../common/visitor';
 
 export type ErrorReport = {
     count: number,
