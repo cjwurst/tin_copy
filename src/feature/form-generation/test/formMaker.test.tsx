@@ -3,8 +3,8 @@ import { render } from '@testing-library/react'
 import { describe, expect } from 'vitest';
 import { wellFormedParseArb, ParseResult } from '../../../common/test/syntaxArbs';
 import Form from '../../../components/Form';
-import parse from '../../parsing/parser';
-import { scan } from '../../lexing/scanner';
+import parse from '../../parsing/parser';       // TODO: we're breaking encapsulation here - is this really necessary?
+import { scan } from '../../lexing/scanner';    // TODO: ''
 import { TinSymbol } from '../../../common/token';
 import { plainTextArb } from '../../../common/test/lexicalArbs';
 
