@@ -16,7 +16,7 @@ describe('Scanner', () => {
             let tokens = scan(source);
             expect(tokens.length).toBe(3);
             expectDummy(tokens[0], tokens[2]);
-            expect(tokens[1].kind == TokenKind.Text);
+            expect(tokens[1].kind == 'text');
         }
     );
     
@@ -43,23 +43,23 @@ describe('Scanner', () => {
             TinSymbol.DoubleRightBracket;
         let tokens = scan(source);
         let expectedKinds:TokenKind[] = [
-            TokenKind.Text,
-            TokenKind.Text,
-            TokenKind.TagOpen,
-            TokenKind.Bad,
-            TokenKind.Tilde,
-            TokenKind.Colon,
-            TokenKind.Comma,
-            TokenKind.If,
-            TokenKind.Whitespace,
-            TokenKind.Else,
-            TokenKind.Whitespace,
-            TokenKind.Tin,
-            TokenKind.Whitespace,
-            TokenKind.Identifier,
-            TokenKind.TagClose,
-            TokenKind.Text,
-            TokenKind.EOF
+            'text',
+            'text',
+            'tagOpen',
+            'bad',
+            'tilde',
+            'colon',
+            'comma',
+            'if',
+            'whitespace',
+            'else',
+            'whitespace',
+            'tin',
+            'whitespace',
+            'identifier',
+            'tagClose',
+            'text',
+            'eof'
         ]
         expect(tokens.length).toBe(expectedKinds.length);
         let length = Math.min(tokens.length, expectedKinds.length);
@@ -73,11 +73,11 @@ describe('Scanner', () => {
  */
 function expectDummy(firstText: Token, eof: Token) {
     expect(isEmpty(firstText));
-    expect(eof.kind == TokenKind.EOF);
+    expect(eof.kind == 'eof');
 }
 
 function isEmpty(t: Token) { 
-    t.kind == TokenKind.Text && t.lexeme == '';
+    t.kind == 'text' && t.lexeme == '';
 }
 
 function isPureText(s: string) {

@@ -2,7 +2,7 @@ import { Token, TokenKind } from './token';
 import { Visitor } from "./visitor";
 import { TinError } from '../feature/tin-errors/tinError';
 
-const DUMMY_TOKEN = new Token('EOF', TokenKind.Bad, -1, -1);
+const DUMMY_TOKEN: Token = { lexeme: '', kind: 'bad', iChar: -1, iLine: -1 };
 
 /**
  * An abstract syntax tree node.
@@ -92,7 +92,7 @@ export abstract class SyntaxTree {
         this.m_errors.push({ 
             kind: 'syntax',
             message: message, 
-            iLine: token.line, 
+            iLine: token.iLine, 
             iChar: token.iChar 
         });
     }
@@ -148,13 +148,13 @@ export class TextExpr extends SyntaxTree {
     constructor(tokens: Token[]) {
         super();
         let token: Token | undefined;
-        if (token = this.match(tokens, TokenKind.Text)) {
+        if (token = this.match(tokens, 'text')) {
             this.content = { 
                 kind: 'string', 
                 value: token.lexeme
             };
             this.tail = new TextExpr(tokens);
-        } else if (token = this.match(tokens, TokenKind.TagOpen)) {
+        } else if (token = this.match(tokens, 'tagOpen')) {
             this.content = {
                 kind: 'variable',
                 value: new VariableTag(tokens)
@@ -180,7 +180,7 @@ export class TextExpr extends SyntaxTree {
 export class EOF extends SyntaxTree {
     constructor(tokens: Token[]) {
         super();
-        if (!this.match(tokens, TokenKind.EOF)) {
+        if (!this.match(tokens, 'eof')) {
             this.pushError(
                 "Expected the end of the email body.", 
                 this.peek(tokens)?? DUMMY_TOKEN
@@ -206,8 +206,8 @@ export class VariableTag extends SyntaxTree {
     constructor(tokens: Token[]) {
         super();
         if (
-            !(this.identifier = this.match(tokens, TokenKind.Identifier)) ||
-            !this.match(tokens, TokenKind.TagClose)
+            !(this.identifier = this.match(tokens, 'identifier')) ||
+            !this.match(tokens, 'tagClose')
         ) {
             this.pushError("Expected a variable tag.", 
                 this.peek(tokens)?? DUMMY_TOKEN);

@@ -1,28 +1,32 @@
 import { fc } from '@fast-check/vitest';
 import { Token, TokenKind, TinSymbol } from '../../../common/token';
 
-export const badTokenArb = fc.constant(new Token('', TokenKind.Bad, 0, 0));
+export const badTokenArb = fc.constant(makeSimpleToken('', 'bad', 0, 0));
 
 export const tokenArb = new Map<
     TokenKind, 
     fc.Arbitrary<Token>
 >([
-    [TokenKind.Text, fc.string().map((s) => 
-        new Token(s, TokenKind.Text, 0, 0)
+    ['text', fc.string().map((s) => makeSimpleToken(s, 'text', 0, 0))],
+    ['tagClose', fc.constant(makeSimpleToken(
+        TinSymbol.DoubleRightBracket, 
+        'tagClose', 
+        0, 0)
     )],
-    [TokenKind.TagClose, fc.constant(new Token(
-        TinSymbol.DoubleRightBracket, TokenKind.TagClose, 0, 0
+    ['tagOpen', fc.constant(makeSimpleToken(
+        TinSymbol.DoubleLeftBracket, 
+        'tagOpen', 
+        0, 0
     ))],
-    [TokenKind.TagOpen, fc.constant(new Token(
-        TinSymbol.DoubleLeftBracket, TokenKind.TagOpen, 0, 0
+    ['eof', fc.constant(makeSimpleToken(
+        '',
+        'eof',
+        0, 0
     ))],
-    [TokenKind.EOF, fc.constant(new Token(
-        '', TokenKind.EOF, 0, 0
-    ))],
-    [TokenKind.Identifier, fc.string().filter((s) => s.length > 0).map((s) => 
-        new Token(s, TokenKind.Identifier, 0, 0)
+    ['identifier', fc.string().filter(s => s.length > 0).map((s) => 
+        makeSimpleToken(s, 'identifier', 0, 0)
     )],
-    [TokenKind.Bad, badTokenArb]
+    ['bad', badTokenArb]
 ]);
 
 export const symbolArb = fc.constantFrom(
@@ -30,3 +34,12 @@ export const symbolArb = fc.constantFrom(
 );
 
 export const sourceArb = fc.array(symbolArb).map((l) => l.join(''));
+
+function makeSimpleToken(
+    lexeme: string, 
+    kind: TokenKind, 
+    iChar: number, 
+    iLine: number
+): Token {
+    return { lexeme: lexeme, kind: kind, iChar: iChar, iLine: iLine };
+}

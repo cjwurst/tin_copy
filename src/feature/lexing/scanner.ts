@@ -9,13 +9,13 @@ class Scanner {
     private i: number = 0;          // Current index
     private iToken: number = 0;     // Start of current token
     private iChar: number = 0;      // Index from last new line
-    private line: number = 0;       // Current line
+    private iLine: number = 0;       // Current line
 
     private static keywords: Map<string, TokenKind> = new Map<string, TokenKind>(
         [
-            [TinSymbol.If, TokenKind.If],
-            [TinSymbol.Else, TokenKind.Else],
-            [TinSymbol.Tin, TokenKind.Tin]
+            [TinSymbol.If, 'if'],
+            [TinSymbol.Else, 'else'],
+            [TinSymbol.Tin, 'tin']
         ]
     );
 
@@ -36,21 +36,25 @@ class Scanner {
      * text token then an eof token. 
      */
     private scanAll() {
-        this.addToken(TokenKind.Text);
+        this.addToken('text');
         while (!this.eof()) {
+            const c = this.next();
             if (
-                this.next() == TinSymbol.LeftBracket && 
+                c == TinSymbol.LeftBracket && 
                 this.match(TinSymbol.LeftBracket)
             ) {
                 // Add text token up to tag open.
-                this.addToken(TokenKind.Text, 2);
+                this.addToken('text', 2);
 
-                this.addToken(TokenKind.TagOpen);
+                this.addToken('tagOpen');
                 this.scanTag();
+            } else if (c == '\n') {
+                // TODO: iLine only advances outside of a tag. Is this desired?
+                this.iLine++;
             }
         }
-        this.addToken(TokenKind.Text);
-        this.addToken(TokenKind.EOF);
+        this.addToken('text');
+        this.addToken('eof');
     }
 
     /**
@@ -63,17 +67,17 @@ class Scanner {
         while (!this.eof()) {
             let foundWhitespace = false;
             while (this.next(Scanner.isWhitespace)) foundWhitespace = true;
-            if (foundWhitespace) this.addToken(TokenKind.Whitespace);
+            if (foundWhitespace) this.addToken('whitespace');
 
             switch (this.next()) {
                 case TinSymbol.Tilde:
-                    this.addToken(TokenKind.Tilde);
+                    this.addToken('tilde');
                     break;
                 case TinSymbol.Colon:
-                    this.addToken(TokenKind.Colon);
+                    this.addToken('colon');
                     break;
                 case TinSymbol.Comma:
-                    this.addToken(TokenKind.Comma);
+                    this.addToken('comma');
                     break;
                 case TinSymbol.LeftBracket:
                     this.error('Left brackets should not appear inside a ' + 
@@ -81,7 +85,7 @@ class Scanner {
                     break;
                 case TinSymbol.RightBracket:
                     if (this.match(']')) {
-                        this.addToken(TokenKind.TagClose);
+                        this.addToken('tagClose');
                         return;
                     }
                     else {
@@ -101,7 +105,7 @@ class Scanner {
         let name = this.source.substring(this.iToken, this.i);
         if (Scanner.keywords.has(name)) 
             this.addToken(Scanner.keywords.get(name) as TokenKind);
-        else this.addToken(TokenKind.Identifier);
+        else this.addToken('identifier');
     }
 
     /**
@@ -154,18 +158,18 @@ class Scanner {
     private addToken(kind: TokenKind, ignoreCount: number = 0) {
         let iEnd = Math.max(this.i - ignoreCount, this.iToken);
         let lexeme = this.source.substring(this.iToken, iEnd);
-        this.tokens.push(new Token(
-            lexeme, 
-            kind, 
-            this.line, 
-            this.iChar - (this.i - iEnd)
-        ));
+        this.tokens.push({
+            lexeme: lexeme, 
+            kind: kind, 
+            iLine: this.iLine, 
+            iChar: this.iChar - (this.i - iEnd)
+        });
         this.iToken = iEnd;
     }
 
     private error(message: string) {
         // TODO
-        this.addToken(TokenKind.Bad);
+        this.addToken('bad');
         //console.log(message + ' at ' + this.line + ':' + this.iChar + '.');
     }
 
