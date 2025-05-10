@@ -219,3 +219,5 @@ export class VariableTag extends SyntaxTree {
 export type SyntaxError = {
     message: string
 }
+
+// TODO: Make 'common.ts' barrel file
