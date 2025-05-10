@@ -1,20 +1,3 @@
-export enum TokenKind {
-    Text,
-    StringLiteral,
-    TagOpen,
-    TagClose,
-    Tilde,
-    Colon,
-    Comma,
-    If,
-    Else,
-    Tin,
-    Identifier,
-    EOF,
-    Whitespace,
-    Bad
-}
-
 export enum TinSymbol {
     LeftBracket = '[',
     DoubleLeftBracket = '[[',
@@ -26,20 +9,29 @@ export enum TinSymbol {
     If = 'if',
     Else = 'else',
     Tin = 'tin'
-}
+};
 
-export class Token {
-    constructor(
-        readonly lexeme: string,
-        readonly kind: TokenKind,
-        readonly line: number,
-        readonly iChar: number
-    ) {}
+export type TokenKind = TokenDetail['kind'];
 
-    public toString(): string {
-        return TokenKind[this.kind] 
-            + " '" + this.lexeme + "'" 
-            + " at " + this.line 
-            + ":" + this.iChar;
-    }
-}
+export type Token = TokenDetail & TokenCommon;
+
+type TokenCommon = {
+    readonly lexeme: string,
+    readonly iLine: number,
+    readonly iChar: number
+};
+
+type TokenDetail =
+    | { readonly kind: 'text' }
+    | { readonly kind: 'tagOpen' }
+    | { readonly kind: 'tagClose' }
+    | { readonly kind: 'tilde' }
+    | { readonly kind: 'colon' }
+    | { readonly kind: 'comma' }
+    | { readonly kind: 'if' }
+    | { readonly kind: 'else' }
+    | { readonly kind: 'tin' }
+    | { readonly kind: 'identifier' }
+    | { readonly kind: 'eof' }
+    | { readonly kind: 'whitespace' }
+    | { readonly kind: 'bad' };

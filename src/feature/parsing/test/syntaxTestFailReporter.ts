@@ -2,7 +2,7 @@ import { fc } from '@fast-check/vitest';
 import toPrettyString from '../../../common/test/prettyPrinter';
 import { ParseResult } from '../../../common/test/syntaxArbs';
 
-export function syntaxErrorReporter(out:fc.RunDetails<[ParseResult]>) {
+export function syntaxTestFailReporter(out:fc.RunDetails<[ParseResult]>) {
     if (out.failed) {
         let message = '\n';
         if (out.counterexample) {

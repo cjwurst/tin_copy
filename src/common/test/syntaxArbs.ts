@@ -2,7 +2,7 @@ import { fc } from '@fast-check/vitest';
 import { Token, TokenKind } from '../token';
 import { badTokenArb, tokenArb } from '../../feature/lexing/test/scannerArbs';
 import { SyntaxTree } from '../syntaxTree';
-import reportErrors, { ErrorReport } from '../../feature/parsing/errorReporter';
+import reportErrors, { ErrorReport } from '../../feature/tin-errors/tinErrorReporter';
 import parse from '../../feature/parsing/parser';
 
 export class ParseResult { 
@@ -23,13 +23,13 @@ export class ParseResult {
 `tie` is `fc.Arbitrary<unknown>` */
 export const wellFormedTokensArb = 
 fc.letrec((tie) => ({
-    document: fc.tuple(tie('textExpr'), getTokenArb(TokenKind.EOF)).map(
+    document: fc.tuple(tie('textExpr'), getTokenArb('eof')).map(
         ([text, eof]) => [...(text as Token[]), eof]
     ),
     textExpr: fc.option(fc.tuple(
         /* The text token arb is wrapped in a singleton tuple so that spread 
         syntax is supported in both cases. */
-        fc.oneof(fc.tuple(getTokenArb(TokenKind.Text)), tie('variableTag')), 
+        fc.oneof(fc.tuple(getTokenArb('text')), tie('variableTag')), 
         tie('textExpr'))
     ).map((pair) => {
         if (pair) {
@@ -39,7 +39,7 @@ fc.letrec((tie) => ({
         return [];
     }),
     variableTag: fc.tuple(...getTokenArbs(
-        TokenKind.TagOpen, TokenKind.Identifier, TokenKind.TagClose
+        'tagOpen', 'identifier', 'tagClose'
     ))
 })).document;
 
