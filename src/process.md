@@ -19,7 +19,7 @@ The scanner must be able to distinguish between plain text and tag text so that 
 The parser maps a list of tokens, a `Token[]`, to an abstract syntax tree, a `SyntaxTree`, and a collection of TinCopy variable definitions, a `TinContext`.
 
 ### Use
-Call `parse` from `./feature/parsing/
+Call `parse` from `./feature/parsing/parser`
 
 ### Failure
 Parsing may fail for any invalid syntax except those caught by the scanner above. Errors are recorded in each node of the syntax tree where it is first encountered. 
