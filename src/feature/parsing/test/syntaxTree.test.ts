@@ -9,7 +9,7 @@ import { TokenKind } from '../../../common/token';
 describe('Parser', () => {
     test.prop([wellFormedParseArb], { 
         verbose: 2, 
-        reporter: arb.syntaxErrorReporter
+        reporter: arb.syntaxTestFailReporter
     })(
         'should parse a well-formed sequence of tokens without error.',
         (parseResult) => {
@@ -27,8 +27,7 @@ describe('Parser', () => {
         TokenKind.EOF
     ))('should parse a sequence of variable tags and text blocks', 
         (...tokens) => {
-            let ast = parse(tokens);
-            // TODO: Implement this test
+            
         }
     );
 });

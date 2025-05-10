@@ -2,7 +2,7 @@ import { fc } from '@fast-check/vitest';
 import { Token, TokenKind } from '../token';
 import { badTokenArb, tokenArb } from '../../feature/lexing/test/scannerArbs';
 import { SyntaxTree } from '../syntaxTree';
-import reportErrors, { ErrorReport } from '../../feature/parsing/errorReporter';
+import reportErrors, { ErrorReport } from '../../feature/tin-errors/tinErrorReporter';
 import parse from '../../feature/parsing/parser';
 
 export class ParseResult { 

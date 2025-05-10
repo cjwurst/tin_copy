@@ -1,12 +1,15 @@
 import { Token, TokenKind } from './token';
 import { Visitor } from "./visitor";
+import { TinError } from '../feature/tin-errors/tinError';
+
+const DUMMY_TOKEN = new Token('EOF', TokenKind.Bad, -1, -1);
 
 /**
  * An abstract syntax tree node.
  */
 export abstract class SyntaxTree {
-    private m_errors: SyntaxError[] = [];
-    public get errors(): readonly SyntaxError[] { return this.m_errors; }
+    private m_errors: TinError[] = [];
+    public get errors(): readonly TinError[] { return this.m_errors; }
     public get isGood(): boolean { return this.m_errors.length == 0; } 
 
     /** 
@@ -85,8 +88,13 @@ export abstract class SyntaxTree {
         return tokens.length > ahead? tokens[tokens.length-ahead-1] : undefined;
     }
 
-    protected error(message: string) {
-        this.m_errors.push({ message });
+    protected pushError(message: string, token: Token) {
+        this.m_errors.push({ 
+            kind: 'syntax',
+            message: message, 
+            iLine: token.line, 
+            iChar: token.iChar 
+        });
     }
 }
 
@@ -113,17 +121,17 @@ export class TinDoc extends SyntaxTree {
 
 type TextExprContent = 
     | StringContent
-    | VariableTagContent
+    | VariableTagContent;
 
 type StringContent = {
     kind: 'string',
     value: string
-}
+};
 
 type VariableTagContent = {
     kind: 'variable',
     value: VariableTag
-}
+};
 
 const defaultTextExprContent: StringContent = {
     kind: 'string',
@@ -172,8 +180,12 @@ export class TextExpr extends SyntaxTree {
 export class EOF extends SyntaxTree {
     constructor(tokens: Token[]) {
         super();
-        if (!this.match(tokens, TokenKind.EOF)) 
-            this.error("Expected the end of the email body.");
+        if (!this.match(tokens, TokenKind.EOF)) {
+            this.pushError(
+                "Expected the end of the email body.", 
+                this.peek(tokens)?? DUMMY_TOKEN
+            );
+        }
     }
 
     /** @override */
@@ -197,7 +209,8 @@ export class VariableTag extends SyntaxTree {
             !(this.identifier = this.match(tokens, TokenKind.Identifier)) ||
             !this.match(tokens, TokenKind.TagClose)
         ) {
-            this.error("Expected a variable tag.");
+            this.pushError("Expected a variable tag.", 
+                this.peek(tokens)?? DUMMY_TOKEN);
         }
     }
 
@@ -214,8 +227,4 @@ export class VariableTag extends SyntaxTree {
     public accept<T>(visitor: Visitor<T>): T {
         return visitor.visitVariableTag(this);
     }
-}
-
-export type SyntaxError = {
-    message: string
 }
