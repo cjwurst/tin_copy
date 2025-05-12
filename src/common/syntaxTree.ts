@@ -171,11 +171,15 @@ export class TextExpr extends SyntaxTree {
     public readonly tail: TextExpr | undefined;
 
     public static makeTestNode(
-        content: TextExprContent, 
+        content: string | VariableTag, 
         tail: TextExpr | undefined
     ): TextExpr {
+        const wrappedContent = {
+            kind: (content instanceof VariableTag)? 'variable' : 'string',
+            value: content
+        }  as TextExprContent;
         return SyntaxTree.makeNode(TextExpr, {
-            content: content,
+            content: wrappedContent,
             tail: tail
         });
     }
