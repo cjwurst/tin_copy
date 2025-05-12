@@ -49,8 +49,8 @@ A context and an AST are used to generate a fillable form to present to the user
 Create a `<Form />` React component with props root, a `SyntaxTree`, and context, a `TinContext`.
 
 ### Failure
-No failure is anticipated - previous checks should guarantee that the form will be generated.
+No failure is anticipated - previous checks should guarantee that the form will be generated. Errors encountered here are thrown as exceptions.
 
-## Draft Generation
+## Draft Generation 
 
 
