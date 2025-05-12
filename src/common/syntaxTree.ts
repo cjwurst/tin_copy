@@ -8,6 +8,22 @@ const DUMMY_TOKEN: Token = { lexeme: '', kind: 'bad', iChar: -1, iLine: -1 };
  * An abstract syntax tree node.
  */
 export abstract class SyntaxTree {
+    /** 
+     * Make an AST node without parsing.
+     * 
+     * @param nodeConstructor - The constructor of the type of node to make
+     * @param nodeProperties - The properties of the node to initialize
+     * 
+     * @remarks
+     * This function should only be used for testing purposes.
+     */
+    protected static makeNode<T extends SyntaxTree>(
+        nodeConstructor: new () => T, 
+        nodeProperties: Partial<T> = {}
+    ): T {
+        return Object.assign(new nodeConstructor(), nodeProperties);
+    }
+
     private m_errors: TinError[] = [];
     public get errors(): readonly TinError[] { return this.m_errors; }
     public get isGood(): boolean { return this.m_errors.length == 0; } 
@@ -99,13 +115,22 @@ export abstract class SyntaxTree {
 }
 
 export class TinDoc extends SyntaxTree {
-    public readonly content: TextExpr;
-    public readonly eof: EOF;
+    public readonly content: TextExpr = SyntaxTree.makeNode(TextExpr, {});
+    public readonly eof: EOF = SyntaxTree.makeNode(EOF, {});
 
-    constructor(tokens: Token[]) {
+    public static makeTestNode(textExpr: TextExpr | undefined): TinDoc {
+        return SyntaxTree.makeNode(TinDoc, {
+            content: textExpr,
+            eof: SyntaxTree.makeNode(EOF)
+        });
+    }
+
+    constructor(tokens?: Token[]) {
         super();
-        this.content = new TextExpr(tokens);
-        this.eof = new EOF(tokens);
+        if (tokens) {
+            this.content = new TextExpr(tokens);
+            this.eof = new EOF(tokens);
+        }
     }
 
     /** @override */
@@ -145,8 +170,19 @@ export class TextExpr extends SyntaxTree {
     public readonly content: TextExprContent = defaultTextExprContent;
     public readonly tail: TextExpr | undefined;
 
-    constructor(tokens: Token[]) {
+    public static makeTestNode(
+        content: TextExprContent, 
+        tail: TextExpr | undefined
+    ): TextExpr {
+        return SyntaxTree.makeNode(TextExpr, {
+            content: content,
+            tail: tail
+        });
+    }
+
+    constructor(tokens?: Token[]) {
         super();
+        if (!tokens) return this;
         let token: Token | undefined;
         if (token = this.match(tokens, 'text')) {
             this.content = { 
@@ -178,9 +214,13 @@ export class TextExpr extends SyntaxTree {
 }
 
 export class EOF extends SyntaxTree {
-    constructor(tokens: Token[]) {
+    public static makeTesttNode(): EOF {
+        return SyntaxTree.makeNode(EOF);
+    }
+
+    constructor(tokens?: Token[]) {
         super();
-        if (!this.match(tokens, 'eof')) {
+        if (tokens && !this.match(tokens, 'eof')) {
             this.pushError(
                 "Expected the end of the email body.", 
                 this.peek(tokens)?? DUMMY_TOKEN
@@ -202,9 +242,16 @@ export class EOF extends SyntaxTree {
 export class VariableTag extends SyntaxTree {
     public readonly identifier: Token | undefined;
 
+    public static makeTestNode(identifier: Token | undefined): VariableTag {
+        return SyntaxTree.makeNode(VariableTag, {
+            identifier: identifier
+        });
+    }
+
     // Parses starting *after* the tag open.
-    constructor(tokens: Token[]) {
+    constructor(tokens?: Token[]) {
         super();
+        if (!tokens) return this;
         if (
             !(this.identifier = this.match(tokens, 'identifier')) ||
             !this.match(tokens, 'tagClose')
