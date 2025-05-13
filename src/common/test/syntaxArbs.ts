@@ -4,7 +4,6 @@ import { badTokenArb, tokenArb } from '../../feature/lexing/test/scannerArbs';
 import * as syn from '../syntaxTree';
 import reportErrors, { ErrorReport } from '../../feature/tin-errors/tinErrorReporter';
 import parse from '../../feature/parsing/parser';
-import { T } from 'vitest/dist/chunks/environment.d.C8UItCbf.js';
 
 export class ParseResult { 
     constructor(
