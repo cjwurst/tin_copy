@@ -218,7 +218,7 @@ export class TextExpr extends SyntaxTree {
 }
 
 export class EOF extends SyntaxTree {
-    public static makeTesttNode(): EOF {
+    public static makeTestNode(): EOF {
         return SyntaxTree.makeNode(EOF);
     }
 
