@@ -26,17 +26,15 @@ type ASTTypeMap<T> = {
     eof: T
 };
 
-function syntaxTreeLetrec<T>(
-    builder: fc.LetrecTypedBuilder<
-        T extends ASTTypeMap<unknown>? T : ASTTypeMap<T>
-    >
+function syntaxTreeLetrec<T extends ASTTypeMap<unknown>>(
+    builder: fc.LetrecTypedBuilder<T>
 ) {
     return fc.letrec(builder);
 }
 
 /* Casting is necessary throughout this definition since the return type of 
 `tie` is `fc.Arbitrary<unknown>` */
-export const wellFormedTokensArb = syntaxTreeLetrec<Token[]>(
+export const wellFormedTokensArb = syntaxTreeLetrec<ASTTypeMap<Token[]>>(
     (tie) => ({
         document: fc.tuple(tie('textExpr'), getTokenArb('eof')).map(
             ([text, eof]) => [...(text as Token[]), eof]
