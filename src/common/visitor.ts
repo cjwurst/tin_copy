@@ -1,4 +1,7 @@
 import * as syn from './syntaxTree';
+import { isNever } from './staticAssert';
+
+// TODO: Change the name and descriptions - this isn't the visitor pattern!
 
 /**
  * A visitor to a syntax tree, as in the visitor pattern. Provides a unified 
@@ -24,7 +27,18 @@ export abstract class Visitor<T> {
 export abstract class PiecewiseVisitor<T> extends Visitor<T> {
     /** @override */
     protected visit(node: syn.SyntaxTree): T {
-        return node.accept(this);
+        switch(node.kind) {
+            case 'tinDoc':
+                return this.visitTinDoc(node);
+            case 'textExpr':
+                return this.visitTextExpr(node);
+            case 'variableTag':
+                return this.visitVariableTag(node);
+            case 'eof':
+                return this.visitEOF(node);
+            default:
+                isNever(node);
+        }
     }
 }
 

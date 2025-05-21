@@ -5,7 +5,7 @@ import { PiecewiseVisitor } from '../../common/visitor';
 import * as assert from '../../common/staticAssert';
 
 /**
- * Make a form from the root of a syntax tree.
+ * Make a form (or part of a form) from a syntax tree root (or other node).
  */
 export default function makeForm(
     root: syn.SyntaxTree, 
@@ -44,7 +44,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
             case 'string':
                 break;
             case 'variable':
-                input = this.visitVariableTag(content.value);
+                input = this.visitVariableTag(content.payload);
                 break;
             default:
                 assert.isNever(content);
@@ -64,9 +64,9 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
 
     /** @override */
     public visitVariableTag(variableTag: syn.VariableTag): React.ReactNode {
-        if (!variableTag.isGood || !variableTag.name) return <></>;
+        if (!syn.isGood(variableTag) || !variableTag.identifier) return <></>;
         
-        const name = variableTag.name;
+        const name = variableTag.identifier.lexeme;
         const value = this.context.tryGet(name);
         if (!value) {
             if (name) {
@@ -93,7 +93,9 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
 
             case 'boolean':
                 return <>TODO</>; // TODO
+
+            default:
+                assert.isNever(value);
         }
-        assert.isNever(value);
     }
 }
