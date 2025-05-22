@@ -1,5 +1,5 @@
 import * as syn from '../common/syntaxTree.ts';
-import makeForm from '../feature/form-generation/formMaker.tsx';
+import makeForm from '../features/form-generation/formMaker.tsx';
 import { TinContext, TinValue } from '../common/tinContext.ts';
 import { useState } from 'react';
 

@@ -1,5 +1,5 @@
 import { Token } from './token';
-import { TinError } from '../feature/tin-errors/tinError';
+import { TinError } from '../features/tin-errors/tinError';
 import { staticAssert } from './staticAssert';
 
 type SyntaxTreeCommon = {

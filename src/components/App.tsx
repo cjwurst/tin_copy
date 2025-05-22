@@ -1,6 +1,6 @@
 import './App.css';
 
-import { Token, scan } from '../feature/lexing/scanner.ts';
+import { Token, scan } from '../features/lexing/scanner.ts';
 import { parse } from '../common/syntaxTree.ts'
 import { Form } from './Form.tsx';
 
