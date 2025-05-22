@@ -1,4 +1,4 @@
-import * as syn from '../common/syntaxTree.ts';
+import * as syn from '../features/parsing/syntaxTree.ts';
 import makeForm from '../features/form-generation/formMaker.tsx';
 import { TinContext, TinValue } from '../common/tinContext.ts';
 import { useState } from 'react';

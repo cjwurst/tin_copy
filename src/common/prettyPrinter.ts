@@ -1,5 +1,5 @@
 import { PiecewiseVisitor } from './visitor';
-import * as syn from './syntaxTree'
+import * as syn from '../features/parsing/syntaxTree'
 
 export default function toPrettyString(root: syn.SyntaxTree): string {
     return new PrettyPrinter(root).toPrettyString();

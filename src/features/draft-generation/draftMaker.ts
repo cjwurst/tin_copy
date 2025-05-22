@@ -1,7 +1,7 @@
-import * as syn from '../../common/syntaxTree';
-import { Draft, DraftError } from '../../common/draft';
-import { TinContext } from '../../common/tinContext';
-import { PiecewiseVisitor } from '../../common/visitor';
+import * as syn from '../../common/intermediates.ts';
+import { Draft, DraftError } from './draft.ts';
+import { TinContext } from '../../common/tinContext.ts';
+import { PiecewiseVisitor } from '../../common/visitor.ts';
 
 export default function makeDraft(
     root: syn.SyntaxTree, 
@@ -30,7 +30,7 @@ class DraftMaker extends PiecewiseVisitor<string> {
      * @returns A draft filled with entries from `this.context`.
      */
     public makeDraft(root: syn.SyntaxTree) {
-        return root.accept(this);
+        return this.visit(root);
     }
 
     /** @override */
@@ -43,9 +43,9 @@ class DraftMaker extends PiecewiseVisitor<string> {
         const content = textExpr.content;
         switch(content.kind) {
             case 'string':
-                return content.value;
+                return content.payload;
             case 'variable':
-                let varText = this.visitVariableTag(content.value);
+                let varText = this.visitVariableTag(content.payload);
                 if (textExpr.tail) 
                     return varText + this.visitTextExpr(textExpr.tail);
                 return varText
@@ -59,7 +59,7 @@ class DraftMaker extends PiecewiseVisitor<string> {
 
     /** @override */
     public visitVariableTag(variableTag: syn.VariableTag): string {
-        const variable = this.context.tryGet(variableTag.name);
+        const variable = this.context.tryGet(variableTag.identifier?.lexeme);
         if (!variable) {
             // TODO: DraftError here.
             return '';

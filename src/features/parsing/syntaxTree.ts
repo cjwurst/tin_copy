@@ -1,6 +1,6 @@
-import { Token } from './token';
-import { TinError } from '../features/tin-errors/tinError';
-import { staticAssert } from './staticAssert';
+import { Token } from '../../common/token';
+import { TinError } from '../tin-errors/tinError';
+import { staticAssert } from '../../common/staticAssert';
 
 type SyntaxTreeCommon = {
     readonly errors: TinError[],

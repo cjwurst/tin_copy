@@ -1,5 +1,5 @@
 import { Token, TokenKind } from '../../common/token';
-import * as syn from '../../common/syntaxTree';
+import * as syn from '../../common/intermediates.ts';
 import { TinError } from '../tin-errors/tinError';
 
 export default function parse(tokens: Token[]): syn.SyntaxTree {

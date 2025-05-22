@@ -1,4 +1,4 @@
 export * from './token.ts';
-export * from './syntaxTree.ts';
+export * from '../features/parsing/syntaxTree.ts';
 export * from './tinContext.ts';
-export * from './draft.ts';
+export * from '../features/draft-generation/draft.ts';

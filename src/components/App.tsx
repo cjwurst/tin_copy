@@ -1,7 +1,7 @@
 import './App.css';
 
 import { Token, scan } from '../features/lexing/scanner.ts';
-import { parse } from '../common/syntaxTree.ts'
+import { parse } from '../features/parsing/syntaxTree.ts'
 import { Form } from './Form.tsx';
 
 export default function App() {

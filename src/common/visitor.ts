@@ -1,4 +1,4 @@
-import * as syn from './syntaxTree';
+import * as syn from '../features/parsing/syntaxTree';
 import { isNever } from './staticAssert';
 
 /**
