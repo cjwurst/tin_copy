@@ -1,11 +1,9 @@
 import * as syn from './syntaxTree';
 import { isNever } from './staticAssert';
 
-// TODO: Change the name and descriptions - this isn't the visitor pattern!
-
 /**
- * A visitor to a syntax tree, as in the visitor pattern. Provides a unified 
- * interface between visitors and subclasses of `SyntaxTree`.
+ * A visitor to an AST, as in the visitor pattern. Provides a unified interface
+ * between visitors and subtypes of `SyntaxTree`.
  * 
  * @remarks
  * A concrete visitor extends either the `PiecewiseVisitor` or `UniformVisitor` 
@@ -44,11 +42,6 @@ export abstract class PiecewiseVisitor<T> extends Visitor<T> {
 
 /**
  * A visitor which treats all subtypes of `SyntaxTree` the same.
- * 
- * @remarks
- * These classes could be implemented as `SyntaxTree` methods. A "visitor-like" 
- * pattern is used instead for consistency with `PiecewiseVisitor` and for 
- * separation of concerns.
  */
 export abstract class UniformVisitor<T> extends Visitor<T> {
     /** @override */
