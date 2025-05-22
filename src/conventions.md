@@ -77,7 +77,7 @@ staticAssert<Foo extends FooCommon? true : false>;
 This sort of declaration is streamlined using mapped types and the `Extract` type utility. (See `syntaxTree.ts` for an example.) However, using mapped types in this way produces less readable type names in error messages, e.g. `...TextExprDetail & SyntaxTreeCommon...` instead of `TextExpr`. Type names in the source remain the same by simply exporting a type alias.
 
 ### Exceptions
-Abstract classes are used when a type should be partially implemented for all objects extending it and there is no need to operate over all types extending the base type. The `SyntaxTreeHandler` class is an example. In the process of refactoring it to a type, I found that much more boilerplate is necessary when using a type than when using a class. 
+Abstract classes are used when a type should be partially implemented for all objects extending it and there is no need to operate over all types extending the base type. The `Visitor` class is an example. In the process of refactoring it to a type, I found that much more boilerplate is necessary when using a type than when using a class. 
 
 ## Declaration merging between namespaces and types
 The functions and types associated with a given type are defined under a namespace with the same name as original type. This allows us to use the familiar dot syntax to access these names as if they were static methods of a class or inner classes respectively. The benefits of the "Types over classes" section are preserved, but we can also "attach" functions to our types. 
