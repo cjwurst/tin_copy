@@ -1,6 +1,6 @@
 import { fc, test } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
-import { wellFormedParseArb, ParseResult } from '../../../common/test/syntaxArbs';
+import { wellFormedParseArb, ParseResult } from '../../../common/arbs.ts';
 
 // The draft maker maps (root, context) => draft.
 describe('Draft maker', () => {
