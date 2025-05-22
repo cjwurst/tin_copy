@@ -1,4 +1,4 @@
-import { isNever } from "./staticAssert";
+import { isNever } from "../../common/staticAssert";
 
 export class TinContext {
     private valueByName = new Map<string, TinValue>();

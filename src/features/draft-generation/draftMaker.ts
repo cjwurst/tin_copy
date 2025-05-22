@@ -1,6 +1,6 @@
 import * as syn from '../../common/intermediates.ts';
 import { Draft, DraftError } from './draft.ts';
-import { TinContext } from '../../common/tinContext.ts';
+import { TinContext } from '../../common/intermediates.ts';
 import { PiecewiseVisitor } from '../../common/visitor.ts';
 
 export default function makeDraft(
