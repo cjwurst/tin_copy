@@ -19,26 +19,17 @@ export class ParseResult {
     }
 };
 
-type ASTTypeMap<T> = {
-    document: T,
-    textExpr: T,
-    variableTag: T,
-    eof: T
-};
+type ASTTypeMap<T> = { [_ in syn.SyntaxTreeKind]: T };
 
-function syntaxTreeLetrec<T>(
-    builder: fc.LetrecTypedBuilder<
-        T extends ASTTypeMap<unknown>? T : ASTTypeMap<T>
-    >
+function syntaxTreeLetrec<T extends ASTTypeMap<unknown>>(
+    builder: fc.LetrecTypedBuilder<T>
 ) {
     return fc.letrec(builder);
 }
 
-/* Casting is necessary throughout this definition since the return type of 
-`tie` is `fc.Arbitrary<unknown>` */
-export const wellFormedTokensArb = syntaxTreeLetrec<Token[]>(
+export const wellFormedTokensArb = syntaxTreeLetrec<ASTTypeMap<Token[]>>(
     (tie) => ({
-        document: fc.tuple(tie('textExpr'), getTokenArb('eof')).map(
+        tinDoc: fc.tuple(tie('textExpr'), getTokenArb('eof')).map(
             ([text, eof]) => [...(text as Token[]), eof]
         ),
 
@@ -61,37 +52,52 @@ export const wellFormedTokensArb = syntaxTreeLetrec<Token[]>(
 
         eof: fc.constant([] as Token[])
     })
-).document;
+).tinDoc;
 
-export const syntaxTreeArbs = syntaxTreeLetrec<{
-    document: syn.TinDoc,
-    textExpr: syn.TextExpr,
-    variableTag: syn.VariableTag,
-    eof: syn.EOF
-}>(
+/* Define these here to add a type check on the `content` of the `textExpr` 
+letrec field below. */
+type TextExprContentBuilder = (tie: fc.LetrecTypedTie<syn.NodeTypeByName>) => 
+    fc.Arbitrary<syn.TextExpr.Content>;
+const VARIABLE_KIND: syn.TextExpr.Content['kind'] = 'variable';
+const STRING_KIND: syn.TextExpr.Content['kind'] = 'string';
+const buildTextExprContentArb: TextExprContentBuilder = (tie) => fc.oneof(
+    tie('variableTag').map((v) => ({ kind: VARIABLE_KIND, payload: v })),
+    fc.string().map((s) => ({ kind: STRING_KIND, payload: s }))
+);
+
+/*TODO: Figure out why this casts `VARIABLE_KIND` from type '"variable"' to 
+type 'string', resulting in a type error. A workaround is given above with an
+explicit type tag. */
+/*type TextExprContentBuilder = (tie: fc.LetrecTypedTie<NodeByTypeName>) => 
+    fc.Arbitrary<syn.TextExpr.Content>;
+const VARIABLE_KIND = 'variable';
+const STRING_KIND: syn.TextExpr.Content['kind'] = 'string';
+const buildTextExprContentArb: TextExprContentBuilder = (tie) => fc.oneof(
+    tie('variableTag').map((v) => ({ kind: VARIABLE_KIND, payload: v })),
+    fc.string().map((s) => ({ kind: STRING_KIND, payload: s }))
+);*/
+
+// TODO: Add unmaps, maybe?
+export const syntaxTreeArbs = syntaxTreeLetrec<syn.NodeTypeByName>(
     (tie) => ({
-        document: fc.option(
-            tie('textExpr'),
-            { nil: undefined }
-        ).map((body) => syn.TinDoc.makeTestNode(body)),
+        tinDoc: tie('textExpr').map((body) => syn.TinDoc.make(body)),
 
         textExpr: fc.tuple(
-            fc.oneof(tie('variableTag') as fc.Arbitrary<syn.VariableTag>, fc.string()),
+            buildTextExprContentArb(tie),
             fc.option(
-                tie('textExpr') as fc.Arbitrary<syn.TextExpr>,
+                tie('textExpr'),
                 { nil: undefined }
             )
-        ).map(([content, tail]) => syn.TextExpr.makeTestNode(content, tail)),
+        ).map(([content, tail]) => syn.TextExpr.make(content, tail)),
 
         variableTag: fc.option(
             getTokenArb('identifier'),
             { nil: undefined }
-        ).map((identifier) => syn.VariableTag.makeTestNode(identifier)),
+        ).map((identifier) => syn.VariableTag.make(identifier)),
 
-        eof: fc.constant(syn.EOF.makeTestNode())
+        eof: fc.constant(syn.EOF.make())
     })
-)
-
+);
 
 export const wellFormedParseArb:fc.Arbitrary<ParseResult> = wellFormedTokensArb.map((tokens) => {
     const root = parse(tokens.slice());

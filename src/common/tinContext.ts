@@ -1,3 +1,5 @@
+import { isNever } from "./staticAssert";
+
 export class TinContext {
     private valueByName = new Map<string, TinValue>();
 
@@ -16,26 +18,23 @@ export class TinContext {
 
 export function makeTinValue(x: boolean | number | string): TinValue {
     switch(typeof x) {
-        case typeof true:
+        case 'boolean':
             return {
                 kind: 'boolean',
                 content: <boolean>x
-            }
-
-        case typeof 1:
+            };
+        case 'number':
             return {
                 kind: 'number',
                 content: <number>x
-            }
-
-        case typeof '':
+            };
+        case 'string':
             return {
                 kind: 'string',
                 content: <string>x
-            }
-
+            };
         default:
-            throw new Error('Signature of `makeTinValue` malformed.');
+            isNever(x);
     }
 }
 
