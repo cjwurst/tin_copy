@@ -1,7 +1,7 @@
 import { test, fc } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
 import { scan } from '../scanner';
-import { Token, TokenKind, TinSymbol } from '../../../common/token';
+import { Token, TokenKind, TinSymbol } from '../token';
 import { sourceArb } from './scannerArbs';
 
 // Note: These tests are brittle wrt dummy pre- and post-tags

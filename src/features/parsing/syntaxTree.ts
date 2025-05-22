@@ -1,4 +1,4 @@
-import { Token } from '../../common/token';
+import { Token } from '../../common/intermediates.ts';
 import { TinError } from '../tin-errors/tinError';
 import { staticAssert } from '../../common/staticAssert';
 

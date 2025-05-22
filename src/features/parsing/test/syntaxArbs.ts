@@ -1,5 +1,5 @@
 import { fc } from '@fast-check/vitest';
-import { Token, TokenKind } from '../../../common/token';
+import { Token, TokenKind } from '../../../common/intermediates.ts';
 import { badTokenArb, tokenArb } from '../../lexing/test/scannerArbs';
 import * as syn from '../../../common/intermediates.ts';
 import reportErrors, { ErrorReport } from '../../tin-errors/tinErrorReporter';

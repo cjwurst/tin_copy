@@ -5,7 +5,7 @@ import { wellFormedParseArb, ParseResult, plainTextArb } from '../../../common/a
 import Form from '../../../components/Form';
 import parse from '../../parsing/parser';       // TODO: we're breaking encapsulation here - is this really necessary?
 import { scan } from '../../lexing/scanner';    // TODO: ''
-import { TinSymbol } from '../../../common/token';
+import { TinSymbol } from '../../../common/intermediates.ts';
 
 describe('<Form />', () => {
     test.prop([wellFormedParseArb])('should render', (result: ParseResult) => {

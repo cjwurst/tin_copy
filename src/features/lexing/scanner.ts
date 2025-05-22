@@ -1,4 +1,4 @@
-import { Token, TokenKind, TinSymbol } from '../../common/token';
+import { Token, TokenKind, TinSymbol } from './token';
 
 export function scan(source: string): Token[] {
     return new Scanner(source).getTokens();
@@ -167,7 +167,7 @@ class Scanner {
         this.iToken = iEnd;
     }
 
-    private error(message: string) {
+    private error(_: string) {
         // TODO
         this.addToken('bad');
         //console.log(message + ' at ' + this.line + ':' + this.iChar + '.');

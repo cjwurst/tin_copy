@@ -1,4 +1,4 @@
-import { Token, TokenKind } from '../../common/token';
+import { Token, TokenKind } from '../../common/intermediates.ts';
 import * as syn from '../../common/intermediates.ts';
 import { TinError } from '../tin-errors/tinError';
 
