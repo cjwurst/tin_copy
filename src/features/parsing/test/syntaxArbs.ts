@@ -56,7 +56,7 @@ export const wellFormedTokensArb = syntaxTreeLetrec<ASTTypeMap<Token[]>>(
 
 /* Define these here to add a type check on the `content` of the `textExpr` 
 letrec field below. */
-type TextExprContentBuilder = (tie: fc.LetrecTypedTie<syn.NodeTypeByName>) => 
+type TextExprContentBuilder = (tie: fc.LetrecTypedTie<syn.NodeTypeByKind>) => 
     fc.Arbitrary<syn.TextExpr.Content>;
 const VARIABLE_KIND: syn.TextExpr.Content['kind'] = 'variable';
 const STRING_KIND: syn.TextExpr.Content['kind'] = 'string';
@@ -78,7 +78,7 @@ const buildTextExprContentArb: TextExprContentBuilder = (tie) => fc.oneof(
 );*/
 
 // TODO: Add unmaps, maybe?
-export const syntaxTreeArbs = syntaxTreeLetrec<syn.NodeTypeByName>(
+export const syntaxTreeArbs = syntaxTreeLetrec<syn.NodeTypeByKind>(
     (tie) => ({
         tinDoc: tie('textExpr').map((body) => syn.TinDoc.make(body)),
 

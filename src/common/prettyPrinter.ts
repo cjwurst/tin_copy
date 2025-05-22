@@ -1,5 +1,5 @@
-import { PiecewiseVisitor } from '../visitor';
-import * as syn from '../syntaxTree'
+import { PiecewiseVisitor } from './visitor';
+import * as syn from './syntaxTree'
 
 export default function toPrettyString(root: syn.SyntaxTree): string {
     return new PrettyPrinter(root).toPrettyString();
@@ -20,7 +20,7 @@ class PrettyPrinter extends PiecewiseVisitor<void> {
     public toPrettyString(): string {
         this.result = '';
         this.marginWidth = 0;
-        this.root.accept(this);
+        this.visit(this.root);
         return this.result;
     }
 
@@ -37,11 +37,11 @@ class PrettyPrinter extends PiecewiseVisitor<void> {
     public visitTextExpr(textExpr: syn.TextExpr): void {
         this.addLine('Text Expression:');
         this.indent();
-        if (textExpr.content instanceof syn.VariableTag) 
-            this.visit(textExpr.content);
+        if (textExpr.content.kind === 'variable') 
+            this.visit(textExpr.content.payload);
         else 
-            this.addLine(textExpr.content.length == 0? 
-                '[empty string]' : textExpr.content);
+            this.addLine(textExpr.content.payload.length == 0? 
+                '[empty string]' : textExpr.content.payload);
         if (textExpr.tail)
             this.visit(textExpr.tail);
         this.unindent();

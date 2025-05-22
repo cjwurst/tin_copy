@@ -1,5 +1,5 @@
 import { fc } from '@fast-check/vitest';
-import toPrettyString from '../../../common/test/prettyPrinter';
+import toPrettyString from '../../../common/prettyPrinter';
 import { ParseResult } from './syntaxArbs';
 
 export function syntaxTestFailReporter(out:fc.RunDetails<[ParseResult]>) {
