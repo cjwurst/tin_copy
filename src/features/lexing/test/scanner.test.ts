@@ -2,7 +2,7 @@ import { test } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
 import { scan } from '../../../common/transformations.ts';
 import { Token, TokenKind, TinSymbol } from '../token.ts';
-import { sourceArb } from './scannerArbs.ts';
+import { sourceArb } from './tokenArbs.ts';
 
 // Note: These tests are brittle wrt dummy pre- and post-tags
 describe('Scanner', () => {
