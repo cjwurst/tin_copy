@@ -2,7 +2,7 @@ import { Token, TokenKind } from '../../common/intermediates.ts';
 import * as syn from '../../common/intermediates.ts';
 import { TinError } from '../tin-errors/tinError';
 
-export default function parse(tokens: Token[]): syn.SyntaxTree {
+export function parse(tokens: Token[]): syn.SyntaxTree {
     // Reverse token list for fast popping in helper functions.
     return parseTinDoc((tokens.reverse()));
 }

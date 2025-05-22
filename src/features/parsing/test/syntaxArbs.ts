@@ -3,7 +3,7 @@ import { Token, TokenKind } from '../../../common/intermediates.ts';
 import { badTokenArb, tokenArb } from '../../lexing/test/scannerArbs';
 import * as syn from '../../../common/intermediates.ts';
 import reportErrors, { ErrorReport } from '../../tin-errors/tinErrorReporter';
-import parse from '../parser';
+import { parse } from '../parser';
 
 export class ParseResult { 
     constructor(

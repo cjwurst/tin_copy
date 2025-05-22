@@ -3,8 +3,7 @@ import { render } from '@testing-library/react'
 import { describe, expect } from 'vitest';
 import { wellFormedParseArb, ParseResult, plainTextArb } from '../../../common/arbs.ts';
 import Form from '../../../components/Form';
-import parse from '../../parsing/parser';       // TODO: we're breaking encapsulation here - is this really necessary?
-import { scan } from '../../lexing/scanner';    // TODO: ''
+import { parse, scan } from '../../../common/transformations.ts';
 import { TinSymbol } from '../../../common/intermediates.ts';
 
 describe('<Form />', () => {
