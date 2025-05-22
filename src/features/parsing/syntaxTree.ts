@@ -66,7 +66,7 @@ export namespace TextExpr {
 
     export function make(
         content: Content, 
-        tail: TextExpr | undefined
+        tail: TextExpr | undefined = undefined
     ): TextExpr {
         const children: SyntaxTree[] = [];
         if (tail) children.push(tail);

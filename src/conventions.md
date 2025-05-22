@@ -71,7 +71,6 @@ export type Baz = {
     kind: 'baz',
     // Properties specific to Baz...
 } & FooCommon;
-staticAssert<Foo extends FooCommon? true : false>;
 ```
 
 This sort of declaration is streamlined using mapped types and the `Extract` type utility. (See `syntaxTree.ts` for an example.) However, using mapped types in this way produces less readable type names in error messages, e.g. `...TextExprDetail & SyntaxTreeCommon...` instead of `TextExpr`. Type names in the source remain the same by simply exporting a type alias.

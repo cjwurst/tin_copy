@@ -1,11 +1,11 @@
-export class Draft {
-    constructor(
-        public readonly content: string,
-        public readonly errors: readonly DraftError[]
-    ) { }
+export type Draft = {
+    readonly content: string,
+    readonly errors: readonly DraftError[]
+}
 
-    public get isGood(): boolean {
-        return this.errors.length === 0;
+export namespace Draft {
+    export function isGood(draft: Draft): boolean {
+        return draft.errors.length === 0;
     }
 }
 

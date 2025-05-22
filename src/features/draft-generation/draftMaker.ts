@@ -3,12 +3,13 @@ import { Draft, DraftError } from './draft.ts';
 import { TinContext } from '../../common/intermediates.ts';
 import { PiecewiseVisitor } from '../../common/visitor.ts';
 
-export default function makeDraft(
+export function makeDraft(
     root: syn.SyntaxTree, 
     context: TinContext
 ): Draft {
     const maker = new DraftMaker(context);
-    return new Draft(maker.makeDraft(root), maker.errors);
+    const content = maker.makeDraft(root);
+    return { content: content, errors: maker.errors };
 }
 
 class DraftMaker extends PiecewiseVisitor<string> {
@@ -59,7 +60,7 @@ class DraftMaker extends PiecewiseVisitor<string> {
 
     /** @override */
     public visitVariableTag(variableTag: syn.VariableTag): string {
-        const variable = this.context.tryGet(variableTag.identifier?.lexeme);
+        const variable = TinContext.tryGet(this.context, variableTag.identifier?.lexeme);
         if (!variable) {
             // TODO: DraftError here.
             return '';
