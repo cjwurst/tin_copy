@@ -1,9 +1,9 @@
 import { fc } from '@fast-check/vitest';
-import { Token, TokenKind } from '../token';
-import { badTokenArb, tokenArb } from '../../features/lexing/test/scannerArbs';
-import * as syn from '../syntaxTree';
-import reportErrors, { ErrorReport } from '../../features/tin-errors/tinErrorReporter';
-import parse from '../../features/parsing/parser';
+import { Token, TokenKind } from '../../../common/token';
+import { badTokenArb, tokenArb } from '../../lexing/test/scannerArbs';
+import * as syn from '../../../common/syntaxTree';
+import reportErrors, { ErrorReport } from '../../tin-errors/tinErrorReporter';
+import parse from '../parser';
 
 export class ParseResult { 
     constructor(

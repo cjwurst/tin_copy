@@ -1,7 +1,7 @@
 import { fc, test } from '@fast-check/vitest';
 import { render } from '@testing-library/react'
 import { describe, expect } from 'vitest';
-import { wellFormedParseArb, ParseResult } from '../../../common/test/syntaxArbs';
+import { wellFormedParseArb, ParseResult } from '../../../common/arbs.ts';
 import Form from '../../../components/Form';
 import parse from '../../parsing/parser';       // TODO: we're breaking encapsulation here - is this really necessary?
 import { scan } from '../../lexing/scanner';    // TODO: ''

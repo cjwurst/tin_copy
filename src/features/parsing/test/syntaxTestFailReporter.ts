@@ -1,6 +1,6 @@
 import { fc } from '@fast-check/vitest';
 import toPrettyString from '../../../common/test/prettyPrinter';
-import { ParseResult } from '../../../common/test/syntaxArbs';
+import { ParseResult } from './syntaxArbs';
 
 export function syntaxTestFailReporter(out:fc.RunDetails<[ParseResult]>) {
     if (out.failed) {

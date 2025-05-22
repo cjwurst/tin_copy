@@ -1,8 +1,8 @@
 import { test } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
 import { syntaxTestFailReporter } from './syntaxTestFailReporter';
-import { wellFormedParseArb } from '../../../common/test/syntaxArbs';
-import { getTokenArbs } from '../../../common/test/syntaxArbs';
+import { wellFormedParseArb } from './syntaxArbs';
+import { getTokenArbs } from './syntaxArbs';
 
 describe('Parser', () => {
     test.prop([wellFormedParseArb], { 
