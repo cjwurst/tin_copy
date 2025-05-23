@@ -1,6 +1,6 @@
 import React from 'react';
 import * as syn from '../../common/intermediates.ts';
-import { makeTinValue, TinContext, TinValue } from './tinContext.ts';
+import { TinContext, TinValue } from '../var-declaration/tinContext.ts';
 import { PiecewiseVisitor } from '../../common/visitor';
 import * as assert from '../../common/staticAssert';
 
@@ -67,15 +67,11 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
         if (!syn.isGood(variableTag) || !variableTag.identifier) return <></>;
         
         const name = variableTag.identifier.lexeme;
-        const value = this.context.tryGet(name);
+        const value = TinContext.tryGet(this.context, name);
         if (!value) {
-            if (name) {
-                // TODO This should maybe happen in a separate pass over the AST?
-                this.setVariable(name, makeTinValue(''));
-            }
-            return <></>;
+            throw new Error(`VariableTag ${name} has no errors, but its 
+                identifier is undefined.`);
         }
-
         switch (value.kind) {
             case 'string':
                 return <input 
@@ -84,16 +80,13 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
                     placeholder={name}
                     value={value.content}
                     onChange={e => { 
-                        this.setVariable(name, makeTinValue(e.target.value));
+                        this.setVariable(name, TinValue.make(e.target.value));
                     }}
                 />
-
             case 'number':
                 return <>TODO</>; // TODO
-
             case 'boolean':
                 return <>TODO</>; // TODO
-
             default:
                 assert.isNever(value);
         }
