@@ -1,6 +1,7 @@
 import * as syn from '../features/parsing/syntaxTree.ts';
 import makeForm from '../features/form-generation/formMaker.tsx';
 import { TinContext, TinValue } from '../common/intermediates.ts';
+import { makeTinContext } from '../common/transformations.ts';
 import { useState } from 'react';
 
 export type FormProps = { 
@@ -8,9 +9,11 @@ export type FormProps = {
 };
 
 export default function Form({ root }: FormProps): React.ReactNode {
-    const [context, setContext] = useState(new TinContext());
+    const blankContext = makeTinContext(root);
+    const [context, setContext] = useState(blankContext);
     const setVariable = (name: string, value: TinValue) => {
-        setContext((oldContext) => oldContext.copyWithChange(name, value));
+        setContext((oldContext) => 
+            TinContext.copyWithChange(oldContext, name, value));
     }
     return makeForm(root, context, setVariable);
 }

@@ -1,14 +1,18 @@
 import { fc, test } from '@fast-check/vitest';
 import { render } from '@testing-library/react'
 import { describe, expect } from 'vitest';
-import { wellFormedParseArb, ParseResult, plainTextArb } from '../../../common/arbs.ts';
+import { wellFormedSyntaxTreeArbs, plainTextArb } from '../../../common/arbs.ts';
 import Form from '../../../components/Form';
 import { parse, scan } from '../../../common/transformations.ts';
 import { TinSymbol } from '../../../common/intermediates.ts';
+import { formTestFailReporter } from './formTestFailReporter.ts';
 
 describe('<Form />', () => {
-    test.prop([wellFormedParseArb])('should render', (result: ParseResult) => {
-        expect(render(<Form root={result.root} />)).toBeDefined();
+    test.prop(
+        [wellFormedSyntaxTreeArbs.tinDoc], 
+        { reporter: formTestFailReporter }
+    )('should render', (root) => {
+        expect(render(<Form root={root} />)).toBeDefined();
     });
 
     const INPUT_ROLE = 'textbox';
@@ -22,9 +26,8 @@ describe('<Form />', () => {
     );
     
     // Randomness here is probably not necessary - just experimenting.
-    test('should make input for variable tags', ({ g }) => {
-        /* Generate a random number of random strings not containing 
-        `TinSymbol.DoubleLeftBracket`. */
+    test.only('should make input for variable tags', ({ g }) => {
+        /* Generate a random number of unique variable names. */
         const count = g(fc.nat, { min: 1, max: 10});
         const tagNames = new Array(count).fill('name').map((s, i) => s + i);
 
@@ -34,6 +37,7 @@ describe('<Form />', () => {
             TinSymbol.DoubleLeftBracket + name + TinSymbol.DoubleRightBracket
                 + makePlainText()
         )].join('');
+        console.log(source);
 
         const root = parse(scan(source));
         const { getByPlaceholderText } = render(<Form root={root} />);

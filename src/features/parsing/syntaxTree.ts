@@ -84,11 +84,21 @@ type VariableTagDetail = {
 };
 export type VariableTag = NodeTypeByKind['variableTag'];
 export namespace VariableTag {
-    export function make(identifier: Token | undefined): VariableTag {
+    export function make(identifier: Token | string | undefined): VariableTag {
+        let identifierToken: Token | undefined;
+        if (typeof identifier === 'string') {
+            identifierToken = {
+                kind: 'identifier',
+                iChar: -1,
+                iLine: -1,
+                lexeme: identifier
+            };
+        } else 
+            identifierToken = identifier;
         return {
             ...makeCommon(),
             kind: 'variableTag',
-            identifier: identifier
+            identifier: identifierToken
         };
     }
 }

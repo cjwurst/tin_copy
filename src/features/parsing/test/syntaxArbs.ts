@@ -2,7 +2,7 @@ import { fc } from '@fast-check/vitest';
 import { Token, TokenKind } from '../../../common/intermediates.ts';
 import { badTokenArb, tokenArb } from '../../lexing/test/tokenArbs.ts';
 import * as syn from '../../../common/intermediates.ts';
-import reportErrors, { ErrorReport } from '../../tin-errors/tinErrorReporter';
+import { reportErrors, ErrorReport } from '../../tin-errors/tinErrorReporter';
 import { parse } from '../parser';
 
 export class ParseResult { 
@@ -77,9 +77,14 @@ const buildTextExprContentArb: TextExprContentBuilder = (tie) => fc.oneof(
     fc.string().map((s) => ({ kind: STRING_KIND, payload: s }))
 );*/
 
+export const syntaxTreeArbs = makeSyntaxTreeArbs();
+export const wellFormedSyntaxTreeArbs = makeSyntaxTreeArbs(true);
+
 // TODO: Add unmaps, maybe?
-export const syntaxTreeArbs = syntaxTreeLetrec<syn.NodeTypeByKind>(
-    (tie) => ({
+function makeSyntaxTreeArbs(
+    wellFormed: boolean = false
+): fc.LetrecValue<syn.NodeTypeByKind> {
+    return syntaxTreeLetrec<syn.NodeTypeByKind>((tie) => ({
         tinDoc: tie('textExpr').map((body) => syn.TinDoc.make(body)),
 
         textExpr: fc.tuple(
@@ -90,14 +95,17 @@ export const syntaxTreeArbs = syntaxTreeLetrec<syn.NodeTypeByKind>(
             )
         ).map(([content, tail]) => syn.TextExpr.make(content, tail)),
 
-        variableTag: fc.option(
-            getTokenArb('identifier'),
-            { nil: undefined }
+        variableTag: (wellFormed? 
+            getTokenArb('identifier') :
+            fc.option(
+                getTokenArb('identifier'),
+                { nil: undefined }
+            )
         ).map((identifier) => syn.VariableTag.make(identifier)),
 
         eof: fc.constant(syn.EOF.make())
-    })
-);
+    }));
+}
 
 export const wellFormedParseArb:fc.Arbitrary<ParseResult> = wellFormedTokensArb.map((tokens) => {
     const root = parse(tokens.slice());

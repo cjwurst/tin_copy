@@ -68,10 +68,7 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
         
         const name = variableTag.identifier.lexeme;
         const value = TinContext.tryGet(this.context, name);
-        if (!value) {
-            throw new Error(`VariableTag ${name} has no errors, but its 
-                identifier is undefined.`);
-        }
+        if (!value) throw new Error(`Context does not contain identifier "name".`);
         switch (value.kind) {
             case 'string':
                 return <input 

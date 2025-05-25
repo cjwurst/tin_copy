@@ -9,6 +9,16 @@ export namespace TinContext {
     ): TinValue | undefined {
         return name? context.get(name) : undefined;
     }
+
+    export function copyWithChange(
+        context: TinContext, 
+        name: string, 
+        value: TinValue
+    ) {
+        const copy = new Map<string, TinValue>(context);
+        copy.set(name, value);
+        return copy;
+    }
 }
 
 export type TinValue = 

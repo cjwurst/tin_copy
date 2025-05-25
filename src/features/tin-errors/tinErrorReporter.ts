@@ -6,9 +6,9 @@ export type ErrorReport = {
 }
 
 /**
- * Report syntax errors encountered during the parsing of a syntax tree.
+ * Report errors encountered during the processing of a syntax tree.
  */
-export default function reportErrors(root: syn.SyntaxTree): ErrorReport {
+export function reportErrors(root: syn.SyntaxTree): ErrorReport {
     return syn.fold(
         root, 
         { count: 0, message: '' }, 

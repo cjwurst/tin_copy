@@ -178,7 +178,7 @@ class Scanner {
     }
 
     private static isAlphaNumeric(c: string) {
-        return /^[a-z0-9]*$/i.test(c);
+        return /^[a-z0-9]$/i.test(c);
     }
 
     private static isWhitespace(c: string) {

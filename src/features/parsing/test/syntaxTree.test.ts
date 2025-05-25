@@ -3,6 +3,8 @@ import { describe, expect } from 'vitest';
 import { syntaxTestFailReporter } from './syntaxTestFailReporter';
 import { wellFormedParseArb } from './syntaxArbs';
 import { getTokenArbs } from './syntaxArbs';
+import { Token } from '../../../common/intermediates.ts';
+import { parse } from '../parser.ts';
 
 describe('Parser', () => {
     test.prop([wellFormedParseArb], { 
@@ -14,6 +16,12 @@ describe('Parser', () => {
             expect(parseResult.errorReport.count).to.equal(0);
         }
     );
+
+    test.todo('should parse a variable tag with the correct name', () => {
+        const root = parse([
+            
+        ]);
+    });
     
     test.todo.prop(getTokenArbs(
         'text',
