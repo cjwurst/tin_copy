@@ -7,13 +7,13 @@ export function parse(tokens: Token[]): syn.SyntaxTree {
     return parseTinDoc((tokens.reverse()));
 }
 
-function parseTinDoc(tokens: Token[]): syn.TinDoc {
+export function parseTinDoc(tokens: Token[]): syn.TinDoc {
     const content = parseTextExpr(tokens);
     const eof = parseEOF(tokens);
     return syn.TinDoc.make(content, eof);
 }
 
-function parseTextExpr(tokens: Token[]): syn.TextExpr {
+export function parseTextExpr(tokens: Token[]): syn.TextExpr {
     let token: Token | undefined;
     let content: syn.TextExpr.Content = {kind: 'string', payload: ''};
     let tail: syn.TextExpr | undefined = undefined;
@@ -32,7 +32,7 @@ function parseTextExpr(tokens: Token[]): syn.TextExpr {
 
 const DUMMY_TOKEN: Token = { kind: 'bad', lexeme: '', iChar: -1, iLine: -1};
 
-function parseVariableTag(tokens: Token[]): syn.VariableTag {
+export function parseVariableTag(tokens: Token[]): syn.VariableTag {
     let identifier: Token | undefined;
     const errors: TinError[] = [];
     if (
@@ -48,7 +48,7 @@ function parseVariableTag(tokens: Token[]): syn.VariableTag {
     };
 }
 
-function parseEOF(tokens: Token[]): syn.EOF {
+export function parseEOF(tokens: Token[]): syn.EOF {
     const errors: TinError[] = [];
     if (!match(tokens, 'eof')) {
         pushError(
@@ -88,7 +88,7 @@ function peek(
     tokens: Token[], 
     ahead: number = 0
 ): Token | undefined {
-    return tokens.length > ahead? tokens[tokens.length-ahead-1] : undefined;
+    return (tokens.length > ahead)? tokens[tokens.length-ahead-1] : undefined;
 }
 
 function pushError(errors: TinError[], message: string, token: Token) {

@@ -2,21 +2,13 @@ import { fc } from '@fast-check/vitest';
 import { Token, TokenKind } from '../../../common/intermediates.ts';
 import { badTokenArb, tokenArb } from '../../lexing/test/tokenArbs.ts';
 import * as syn from '../../../common/intermediates.ts';
-import { reportErrors, ErrorReport } from '../../tin-errors/tinErrorReporter';
 import { parse } from '../parser';
+import { reportErrors, ErrorReport } from '../../../common/tinErrors.ts';
 
-export class ParseResult { 
-    constructor(
-        public readonly tokens: readonly Token[],
-        public readonly root: syn.SyntaxTree,
-        public readonly errorReport: ErrorReport
-    ) {}
-
-    public toString(): string {
-        return '\n' + this.tokens
-            .map((t) => '    ' + t.toString())
-            .join('\n') + '\n  ';
-    }
+type ParseResult = { 
+    tokens: Token[],
+    root: syn.SyntaxTree,
+    errorReport: ErrorReport
 };
 
 type ASTTypeMap<T> = { [_ in syn.SyntaxTreeKind]: T };
@@ -27,7 +19,7 @@ function syntaxTreeLetrec<T extends ASTTypeMap<unknown>>(
     return fc.letrec(builder);
 }
 
-export const wellFormedTokensArb = syntaxTreeLetrec<ASTTypeMap<Token[]>>(
+export const wellFormedTokensArbs = syntaxTreeLetrec<ASTTypeMap<Token[]>>(
     (tie) => ({
         tinDoc: fc.tuple(tie('textExpr'), getTokenArb('eof')).map(
             ([text, eof]) => [...(text as Token[]), eof]
@@ -52,7 +44,18 @@ export const wellFormedTokensArb = syntaxTreeLetrec<ASTTypeMap<Token[]>>(
 
         eof: fc.constant([] as Token[])
     })
-).tinDoc;
+);
+
+export const wellFormedParseArb: fc.Arbitrary<ParseResult> = 
+    wellFormedTokensArbs.tinDoc.map((tokens) => {
+        const root = parse(tokens.slice());
+        return {
+            tokens: tokens, 
+            root: root, 
+            errorReport: reportErrors(root)
+        };
+    }
+);
 
 /* Define these here to add a type check on the `content` of the `textExpr` 
 letrec field below. */
@@ -106,11 +109,6 @@ function makeSyntaxTreeArbs(
         eof: fc.constant(syn.EOF.make())
     }));
 }
-
-export const wellFormedParseArb:fc.Arbitrary<ParseResult> = wellFormedTokensArb.map((tokens) => {
-    const root = parse(tokens.slice());
-    return new ParseResult(tokens, root, reportErrors(root));
-});
 
 export function getTokenArb(kind: TokenKind): fc.Arbitrary<Token> {
     return tokenArb.get(kind)?? badTokenArb;
