@@ -14,15 +14,19 @@ class TinContextMaker extends UniformVisitor<void> {
 
     /** @override */
     public visit(node: SyntaxTree): void {
-        if (node.kind !== 'variableTag' || !node.identifier) return;
-        if (TinContext.tryGet(this.context, node.identifier.lexeme)) {
-            node.errors.push(TinVariableError.make(
-                node.identifier, 
-                `Variable ${node.identifier.lexeme} was already declared, but 
-                    its declared again here.`
-            ));
-            return;
+        if (node.kind == 'variableTag' && node.identifier) {
+            if (TinContext.tryGet(this.context, node.identifier.lexeme)) {
+                node.errors.push(TinVariableError.make(
+                    node.identifier, 
+                    `Variable ${node.identifier.lexeme} was already declared, but 
+                        its declared again here.`
+                ));
+            } else {
+                this.context.set(node.identifier.lexeme, TinValue.make(''));
+            }
         }
-        this.context.set(node.identifier.lexeme, TinValue.make(''));
+        for(let i = 0; i < node.children.length; i++) {
+            this.visit(node.children[i]);
+        }
     }
 }

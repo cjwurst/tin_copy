@@ -68,9 +68,11 @@ export namespace TextExpr {
         content: Content, 
         tail: TextExpr | undefined
     ): TextExpr {
-        const common = tail? makeCommon(tail) : makeCommon();
+        const children: SyntaxTree[] = [];
+        if (tail) children.push(tail);
+        if (content.kind === 'variable') children.push(content.payload);
         return {
-            ...common,
+            ...makeCommon(...children),
             kind: 'textExpr',
             content: content,
             tail: tail

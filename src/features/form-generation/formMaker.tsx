@@ -7,7 +7,7 @@ import * as assert from '../../common/staticAssert';
 /**
  * Make a form (or part of a form) from a syntax tree root (or other node).
  */
-export default function makeForm(
+export function makeForm(
     root: syn.SyntaxTree, 
     context: TinContext, 
     setVariable: (s: string, v: TinValue) => void

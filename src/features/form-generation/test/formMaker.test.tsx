@@ -26,7 +26,7 @@ describe('<Form />', () => {
     );
     
     // Randomness here is probably not necessary - just experimenting.
-    test.only('should make input for variable tags', ({ g }) => {
+    test('should make input for variable tags', ({ g }) => {
         /* Generate a random number of unique variable names. */
         const count = g(fc.nat, { min: 1, max: 10});
         const tagNames = new Array(count).fill('name').map((s, i) => s + i);
@@ -37,9 +37,9 @@ describe('<Form />', () => {
             TinSymbol.DoubleLeftBracket + name + TinSymbol.DoubleRightBracket
                 + makePlainText()
         )].join('');
-        console.log(source);
 
-        const root = parse(scan(source));
+        const tokens = scan(source);
+        const root = parse(tokens);
         const { getByPlaceholderText } = render(<Form root={root} />);
         for (let i = 0; i < tagNames.length; i++) {
             // 'get...' queries throw if not exactly one element is found.
