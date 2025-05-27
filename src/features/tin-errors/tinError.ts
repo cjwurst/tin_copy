@@ -57,6 +57,15 @@ type TinVariableErrorDetail = {
     kind: 'variable'
 } & TinSourceError;
 
+export type TinDraftError = TinErrorTypeByKind['draft'];
+export namespace TinDraftError {
+    export function make(message:string): TinDraftError {
+        return {
+            kind: 'draft',
+            message: message
+        };
+    }
+}
 type TinDraftErrorDetail = {
     kind: 'draft'
 };
