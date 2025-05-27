@@ -30,6 +30,15 @@ describe('Draft maker', () => {
         expect(draft.content).toBe(TEXT);
     });
 
+    test('should fill a simple variable tag', () => {
+        const IDENTIFIER = 'id';
+        const VALUE = 'lorem ipsum';
+        const variableTag = VariableTag.make(IDENTIFIER);
+        const context = makeTinContext(variableTag);
+        context.set(IDENTIFIER, TinValue.make(VALUE));
+        expect(makeDraft(variableTag, context).content).toBe(VALUE);
+    });
+
     /* Note: This test does not check if the draft is filled correctly - only
     that it is filled without error. TODO: This test will probably have to 
     change when we implement type checking. */
@@ -57,14 +66,14 @@ describe('Draft maker', () => {
         );
         const draft = makeDraft(root, makeTinContext(root));
         expect(draft.errors.length).to.greaterThan(0);
-        expect(draft.errors[0].kind).to.be(ERROR_KIND);
+        expect(draft.errors[0].kind).toBe(ERROR_KIND);
     });
 
     test('should fill number variables', () => {
         expectSimpleTagDrafts<number>(-1, 0, 1);
     });
 
-    test.todo('should fill string variables', () => {
+    test('should fill string variables', () => {
         expectSimpleTagDrafts<string>('', 'lorem ipsum');
     });
 });
@@ -89,7 +98,7 @@ function expectSimpleTagDrafts<T>(
         context.set(IDENTIFIER, TinValue.make(content));
         const draft = makeDraft(variableTag, context);
         attachDraftToString(variableTag, draft);
-        expect(draft.content).to.be(String(content));
+        expect(draft.content).toBe(String(content));
     });
 }
 

@@ -1,7 +1,9 @@
 import * as syn from '../../common/intermediates.ts';
-import { Draft, DraftError } from './draft.ts';
+import { Draft } from './draft.ts';
+import { TinDraftError } from '../../common/tinErrors.ts';
 import { TinContext } from '../../common/intermediates.ts';
 import { PiecewiseVisitor } from '../../common/visitor.ts';
+import { isNever } from '../../common/staticAssert.ts';
 
 export function makeDraft(
     root: syn.SyntaxTree, 
@@ -13,11 +15,7 @@ export function makeDraft(
 }
 
 class DraftMaker extends PiecewiseVisitor<string> {
-    private m_errors: DraftError[] = [];
-
-    public get errors(): readonly DraftError[] {
-        return this.m_errors;
-    }
+    public readonly errors: TinDraftError[] = [];
 
     constructor (private context: TinContext) {
         super();
@@ -42,15 +40,18 @@ class DraftMaker extends PiecewiseVisitor<string> {
     /** @override */
     public visitTextExpr(textExpr: syn.TextExpr): string {
         const content = textExpr.content;
+        let result = '';
         switch(content.kind) {
             case 'string':
-                return content.payload;
+                result = content.payload;
+                break;
             case 'variable':
-                let varText = this.visitVariableTag(content.payload);
-                if (textExpr.tail) 
-                    return varText + this.visitTextExpr(textExpr.tail);
-                return varText
+                result = this.visitVariableTag(content.payload);
+                break;
         }
+        if (textExpr.tail) 
+            result += this.visitTextExpr(textExpr.tail);
+        return result;
     }
 
     /** @override */
@@ -60,19 +61,37 @@ class DraftMaker extends PiecewiseVisitor<string> {
 
     /** @override */
     public visitVariableTag(variableTag: syn.VariableTag): string {
-        const variable = TinContext.tryGet(this.context, variableTag.identifier?.lexeme);
+        /* In this case no error is necessary since `variableTag` will already 
+        have an error. */
+        if (!variableTag.identifier) return '';
+        const name = variableTag.identifier.lexeme;
+        const variable = TinContext.tryGet(this.context, name);
         if (!variable) {
-            // TODO: DraftError here.
+            this.errors.push(TinDraftError.make(
+                ''
+            ));
             return '';
         }
         switch(variable.kind) {
+            case 'undefined':
+                this.errors.push(TinDraftError.make(
+                    `A value is missing for variable "${name}".`
+                ));
+                return '';
             case 'boolean':
+                this.errors.push(TinDraftError.make(
+                    `Variable "${name})" cannot be written to the draft 
+                        because it is a boolean.`
+                ));
+                return '';
                 // TODO: DraftError here?
                 return '';
             case 'number':
                 return variable.content.toString();
             case 'string':
                 return variable.content;
+            default:
+                isNever(variable);
         }
     }
 }

@@ -29,7 +29,7 @@ export type TinValue =
 
 export namespace TinValue {
     export function make(x: boolean | number | string | undefined): TinValue {
-        if (!x) return { kind: 'undefined', content: undefined };
+        if (x === undefined) return { kind: 'undefined', content: undefined };
 
         /* TODO: This switch statement only exists to narrow the type of `x` - 
         is there a better way to do this? Casting would work... */
