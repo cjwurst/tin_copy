@@ -22,12 +22,15 @@ export namespace TinContext {
 }
 
 export type TinValue = 
+    | TinUndefined
     | TinString
     | TinBoolean
     | TinNumber;
 
 export namespace TinValue {
-    export function make(x: boolean | number | string): TinValue {
+    export function make(x: boolean | number | string | undefined): TinValue {
+        if (!x) return { kind: 'undefined', content: undefined };
+
         /* TODO: This switch statement only exists to narrow the type of `x` - 
         is there a better way to do this? Casting would work... */
         switch(typeof x) {
@@ -50,6 +53,11 @@ export namespace TinValue {
                 isNever(x);
         }
     }
+}
+
+type TinUndefined = {
+    kind: 'undefined',
+    content: undefined
 }
 
 type TinString = {

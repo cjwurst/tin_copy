@@ -22,7 +22,7 @@ class TinContextMaker extends UniformVisitor<void> {
                         its declared again here.`
                 ));
             } else {
-                this.context.set(node.identifier.lexeme, TinValue.make(''));
+                this.context.set(node.identifier.lexeme, TinValue.make(undefined));
             }
         }
         for(let i = 0; i < node.children.length; i++) {
