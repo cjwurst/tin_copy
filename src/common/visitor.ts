@@ -15,7 +15,7 @@ export abstract class Visitor<T> {
     public abstract visitEOF(eof: syn.EOF): T;
     public abstract visitVariableTag(variableTag: syn.VariableTag): T;
 
-    protected abstract visit(node: syn.SyntaxTree): T;
+    public abstract visit(node: syn.SyntaxTree): T;
 }
 
 /**
@@ -24,7 +24,7 @@ export abstract class Visitor<T> {
  */
 export abstract class PiecewiseVisitor<T> extends Visitor<T> {
     /** @override */
-    protected visit(node: syn.SyntaxTree): T {
+    public visit(node: syn.SyntaxTree): T {
         switch(node.kind) {
             case 'tinDoc':
                 return this.visitTinDoc(node);

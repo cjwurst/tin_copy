@@ -12,7 +12,7 @@ export function makeForm(
     context: TinContext, 
     setVariable: (s: string, v: TinValue) => void
 ): React.ReactNode {
-    return new FormMaker(context, setVariable).makeForm(root);
+    return new FormMaker(context, setVariable).visit(root);
 }
 
 class FormMaker extends PiecewiseVisitor<React.ReactNode> {
@@ -21,10 +21,6 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
         private readonly setVariable: (s: string, v: TinValue) => void
     ) {
         super();
-    }
-
-    public makeForm(root: syn.SyntaxTree): React.ReactNode {
-        return this.visit(root);
     }
 
     /** @override */

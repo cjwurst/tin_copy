@@ -9,6 +9,7 @@ export function makeTinContext(root: SyntaxTree): TinContext {
     return maker.context;
 }
 
+// TODO: Change this to type UniformVisitor<TinContext>?
 class TinContextMaker extends UniformVisitor<void> {
     public readonly context: TinContext = new Map<string, TinValue>();
 
