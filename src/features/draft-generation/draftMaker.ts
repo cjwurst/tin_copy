@@ -72,12 +72,13 @@ class DraftMaker extends PiecewiseVisitor<string> {
             ));
             return '';
         }
+        if (variable.content === undefined) {
+            this.errors.push(TinDraftError.make(
+                `A value is missing for variable "${name}".`
+            ));
+            return '';
+        }
         switch(variable.kind) {
-            case 'undefined':
-                this.errors.push(TinDraftError.make(
-                    `A value is missing for variable "${name}".`
-                ));
-                return '';
             case 'boolean':
                 this.errors.push(TinDraftError.make(
                     `Variable "${name})" cannot be written to the draft 

@@ -70,8 +70,6 @@ class FormMaker extends PiecewiseVisitor<React.ReactNode> {
         const value = TinContext.tryGet(this.context, name);
         if (!value) throw new Error(`Context does not contain identifier "name".`);
         switch (value.kind) {
-            case 'undefined':
-                return <></>;
             case 'string':
                 return <input 
                     type='text' 
