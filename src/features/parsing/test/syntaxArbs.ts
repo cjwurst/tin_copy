@@ -71,14 +71,14 @@ const buildTextExprContentArb: TextExprContentBuilder = (tie) => fc.oneof(
 /*TODO: Figure out why this casts `VARIABLE_KIND` from type '"variable"' to 
 type 'string', resulting in a type error. A workaround is given above with an
 explicit type tag. */
-/*type TextExprContentBuilder = (tie: fc.LetrecTypedTie<NodeByTypeName>) => 
-    fc.Arbitrary<syn.TextExpr.Content>;
-const VARIABLE_KIND = 'variable';
-const STRING_KIND: syn.TextExpr.Content['kind'] = 'string';
-const buildTextExprContentArb: TextExprContentBuilder = (tie) => fc.oneof(
-    tie('variableTag').map((v) => ({ kind: VARIABLE_KIND, payload: v })),
-    fc.string().map((s) => ({ kind: STRING_KIND, payload: s }))
-);*/
+// type TextExprContentBuilder = (tie: fc.LetrecTypedTie<syn.NodeTypeByKind>) => 
+//     fc.Arbitrary<syn.TextExpr.Content>;
+// const VARIABLE_KIND = 'variable';
+// const STRING_KIND = 'string';
+// const buildTextExprContentArb: TextExprContentBuilder = (tie) => fc.oneof(
+//     tie('variableTag').map((v) => ({ kind: VARIABLE_KIND, payload: v })),
+//     fc.string().map((s) => ({ kind: STRING_KIND, payload: s }))
+// );
 
 export const syntaxTreeArbs = makeSyntaxTreeArbs();
 export const wellFormedSyntaxTreeArbs = makeSyntaxTreeArbs(true);
