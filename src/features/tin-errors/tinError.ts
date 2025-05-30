@@ -1,3 +1,5 @@
+// TODO: Does this file belong in common?
+
 import { Token } from '../../common/intermediates.ts';
 
 export type TinError = TinErrorTypeByKind[TinErrorKind];
@@ -6,7 +8,8 @@ type TinErrorDetail =
     | TinTagErrorDetail
     | TinSyntaxErrorDetail
     | TinDraftErrorDetail
-    | TinVariableErrorDetail;
+    | TinVariableErrorDetail
+    | TinTypeErrorDetail;
 
 type TinErrorKind = TinErrorDetail['kind'];
 
@@ -42,20 +45,6 @@ type TinSyntaxErrorDetail = {
     kind: 'syntax'
 } & TinSourceError;
 
-export type TinVariableError = TinErrorTypeByKind['variable'];
-export namespace TinVariableError {
-    export function make(token: Token, message: string): TinVariableError {
-        return {
-            kind: 'variable',
-            iChar: token.iChar,
-            iLine: token.iLine,
-            message: message
-        }
-    }
-}
-type TinVariableErrorDetail = {
-    kind: 'variable'
-} & TinSourceError;
 
 export type TinDraftError = TinErrorTypeByKind['draft'];
 export namespace TinDraftError {
@@ -69,3 +58,31 @@ export namespace TinDraftError {
 type TinDraftErrorDetail = {
     kind: 'draft'
 };
+
+export type TinVariableError = TinErrorTypeByKind['variable'];
+export namespace TinVariableError {
+    export function make(token: Token, message: string): TinVariableError {
+        return {
+            ...TinSourceError.make(token),
+            kind: 'variable',
+            message: message
+        };
+    }
+}
+type TinVariableErrorDetail = {
+    kind: 'variable'
+} & TinSourceError;
+
+export type TinTypeError = TinErrorTypeByKind['type'];
+export namespace TinTypeError {
+    export function make(token: Token, message: string): TinTypeError {
+        return {
+            ...TinSourceError.make(token),
+            kind: 'type',
+            message: message
+        };
+    }
+}
+type TinTypeErrorDetail = {
+    kind: 'type'
+} & TinSourceError;
