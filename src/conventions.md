@@ -51,8 +51,6 @@ Using algebraic data types allow us to specify all summand types comprehensively
 With this approach, adding a new summand type to an ADT results in static errors in whichever modules need to act on each summand type. For example, adding a new `SyntaxTree` node type in `syntaxTree.ts` results in a static type error in `syntaxArbs.ts` until arbitraries are added for the new summand type.
 
 ### Tradeoffs
-#### Breaking the open/closed principle
-This approach closes off the possibility of extending e.g. the `SyntaxTree` type outside its module. This breaks the open/closed principle. In this case that seems fine, even desirable, since adding a new node to the AST represents a major modification of the program's behavior. In other cases, types may be left open to extension through either interface declaration merging or class extension, preferring the former when possible.
 
 #### Awkward distributing over types
 If subtypes are also exported, then the ADT cannot factor those properties out of each summand type. Then the type declaration for `Foo` above would turn into 
