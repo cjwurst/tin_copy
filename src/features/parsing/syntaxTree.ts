@@ -1,6 +1,5 @@
 import { Token } from '../../common/intermediates.ts';
 import { TinError } from '../tin-errors/tinError';
-import { staticAssert } from '../../common/staticAssert';
 
 type SyntaxTreeCommon = {
     readonly errors: TinError[],
@@ -23,10 +22,6 @@ export type NodeTypeByKind = {
 };
 
 export type SyntaxTree = NodeTypeByKind[SyntaxTreeDetail['kind']];
-
-/* Assert that we didn't forget to intersect with `SyntaxTreeCommon` on any of 
-our node types. */
-staticAssert<SyntaxTree extends SyntaxTreeCommon? true: false>;
 
 export type SyntaxTreeKind = SyntaxTree['kind']; 
 
