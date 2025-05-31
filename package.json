@@ -19,6 +19,8 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@fast-check/vitest": "^0.2.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/chrome": "^0.0.315",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
