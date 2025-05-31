@@ -1,4 +1,3 @@
-/*global chrome*/
 import './App.css'
 
 export default function App() {
