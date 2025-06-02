@@ -1,4 +1,4 @@
-import { fc, test } from '@fast-check/vitest';
+import { test } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
 import { syntaxTestFailReporter } from './syntaxTestFailReporter';
 import { Token, TokenKind, VariableTag } from '../../../common/intermediates.ts';

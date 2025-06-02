@@ -5,7 +5,7 @@ import * as syn from '../../../common/intermediates.ts';
 import { parse } from '../parser';
 import { reportErrors, ErrorReport } from '../../../common/tinErrors.ts';
 
-type ParseResult = { 
+export type ParseResult = { 
     tokens: Token[],
     root: syn.SyntaxTree,
     errorReport: ErrorReport

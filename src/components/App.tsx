@@ -1,8 +1,8 @@
 import './App.css';
 
-import { Token, scan } from '../features/lexing/scanner.ts';
-import { parse } from '../features/parsing/syntaxTree.ts'
-import { Form } from './Form.tsx';
+import { Token } from '../common/intermediates.ts';
+import { scan, parse } from '../common/transformations.ts';
+import Form from './Form.tsx';
 
 export default function App() {
     const tokens: Token[] = scan("Here's some text with a [[variableTag]] and an [[otherVariableTag]].");
