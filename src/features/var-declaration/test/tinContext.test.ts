@@ -1,7 +1,7 @@
 import { test } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
 import { wellFormedSyntaxTreeArbs } from '../../../common/arbs.ts';
-import * as syn from '../../../common/intermediates.ts';
+import * as syn from '../../../common/syntaxTree.ts';
 import { reportErrors } from '../../../common/tinErrors.ts';
 import { makeTinContext } from '../tinContextMaker.ts';
 import { TinContext } from '../tinContext.ts';
