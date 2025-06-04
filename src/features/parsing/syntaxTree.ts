@@ -122,12 +122,21 @@ export function isGood(root: SyntaxTree): boolean {
  */
 export function fold<T>(
     root: SyntaxTree, 
-    process: (r: SyntaxTree) => T,
+    process: ((r: SyntaxTree, depth: number) => T) | ((r: SyntaxTree) => T),
     accumulate: (first: T, second: T) => T
 ): T {
+    return foldWithDepth<T>(root, process, accumulate);
+}
+
+export function foldWithDepth<T>(
+    root: SyntaxTree, 
+    process: (r: SyntaxTree, depth: number) => T,
+    accumulate: (first: T, second: T) => T,
+    depth: number = 0
+): T {
     return root.children.map((child) => 
-        fold(child, process, accumulate)
-    ).reduce(accumulate, process(root));
+        foldWithDepth(child, process, accumulate, depth+1)
+    ).reduce(accumulate, process(root, depth));
 }
 
 function makeCommon(...children: SyntaxTree[]): SyntaxTreeCommon {
