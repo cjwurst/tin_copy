@@ -2,15 +2,8 @@ import { fc, test } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
 import { makeDraft } from '../draftMaker.ts';
 import { Draft } from '../draft.ts';
-import { 
-    TinValue,
-    TinDoc, 
-    TextExpr, 
-    EOF, 
-    TinContext, 
-    SyntaxTree, 
-    VariableTag 
-} from '../../../common/intermediates.ts';
+import { TinValue, TinContext } from '../../../common/intermediates.ts';
+import * as syn from '../../../common/syntaxTree.ts';
 import { makeTinContext } from '../../../common/transformations.ts';
 import { wellFormedSyntaxTreeArbs } from '../../../common/arbs.ts';
 import { TinError } from '../../../common/tinErrors.ts';
@@ -20,9 +13,9 @@ import toPrettyString from '../../../common/prettyPrinter.ts';
 describe('Draft maker', () => {
     test('should leave a plaintext template unchanged', () => {
         const TEXT = 'lorem ipsum';
-        const root = TinDoc.make(
-            TextExpr.make({ kind: 'string', payload: TEXT }, undefined),
-            EOF.make()
+        const root = syn.TinDoc.make(
+            syn.TextExpr.make({ kind: 'string', payload: TEXT }, undefined),
+            syn.EOF.make()
         );
         const context = makeTinContext(root);
         const draft = makeDraft(root, context);
@@ -33,7 +26,7 @@ describe('Draft maker', () => {
     test('should fill a simple variable tag', () => {
         const IDENTIFIER = 'id';
         const VALUE = 'lorem ipsum';
-        const variableTag = VariableTag.make(IDENTIFIER);
+        const variableTag = syn.VariableTag.make(IDENTIFIER);
         const context = makeTinContext(variableTag);
         context.set(IDENTIFIER, TinValue.make(VALUE));
         expect(makeDraft(variableTag, context).content).toBe(VALUE);
@@ -55,14 +48,14 @@ describe('Draft maker', () => {
 
     test('should fail given an incomplete context', () => {
         const ERROR_KIND: TinError['kind'] = 'draft';
-        const root = TinDoc.make(
-            TextExpr.make(
+        const root = syn.TinDoc.make(
+            syn.TextExpr.make(
                 { kind: 'string', payload: 'lorem ipsum ' },
-                TextExpr.make({ 
-                    kind: 'variable', payload: VariableTag.make('id') 
+                syn.TextExpr.make({ 
+                    kind: 'variable', payload: syn.VariableTag.make('id') 
                 })
             ),
-            EOF.make()
+            syn.EOF.make()
         );
         const draft = makeDraft(root, makeTinContext(root));
         expect(draft.errors.length).to.greaterThan(0);
@@ -93,7 +86,7 @@ function expectSimpleTagDrafts<T>(
 ): void {
     contents.map((content) => {
         const IDENTIFIER = 'id';
-        const variableTag = VariableTag.make(IDENTIFIER);
+        const variableTag = syn.VariableTag.make(IDENTIFIER);
         const context = makeTinContext(variableTag);
         context.set(IDENTIFIER, TinValue.make(content));
         const draft = makeDraft(variableTag, context);
@@ -109,7 +102,7 @@ function expectSimpleTagDrafts<T>(
  * @remarks
  * This helper exists to customize test failure reporting.
  */
-function attachDraftToString(node: SyntaxTree, draft: Draft): void {
+function attachDraftToString(node: syn.SyntaxTree, draft: Draft): void {
     Object.defineProperties(node, {
         [fc.toStringMethod]: { value: () => {
             const errorCount = draft.errors.length;

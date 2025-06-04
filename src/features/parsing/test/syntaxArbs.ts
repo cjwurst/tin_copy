@@ -1,7 +1,7 @@
 import { fc } from '@fast-check/vitest';
 import { Token, TokenKind } from '../../../common/intermediates.ts';
 import { badTokenArb, tokenArb } from '../../lexing/test/tokenArbs.ts';
-import * as syn from '../../../common/intermediates.ts';
+import * as syn from '../../../common/syntaxTree.ts';
 import { parse } from '../parser';
 import { reportErrors, ErrorReport } from '../../../common/tinErrors.ts';
 

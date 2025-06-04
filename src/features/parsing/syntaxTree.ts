@@ -1,5 +1,5 @@
 import { Token } from '../../common/intermediates.ts';
-import { TinError } from '../tin-errors/tinError';
+import { TinError } from '../../common/tinErrors.ts';
 
 type SyntaxTreeCommon = {
     readonly errors: TinError[],
@@ -113,6 +113,10 @@ export namespace EOF {
     }
 }
 
+export function isGood(root: SyntaxTree): boolean {
+    return root.errors.length == 0;
+}
+
 /**
  * Fold over an AST from leaf to root.
  */
@@ -128,27 +132,6 @@ export function fold<T>(
         result = accumulate(result, fold(root.children[i], result, process, accumulate));
     }
     return accumulate(process(root), result);
-}
-
-/** 
- * A collection of functions acting on the subtypes of `SyntaxTree` with 
- * optional readonly properties common to all functions.
- */
-export type SyntaxTreeHandler<TReturn, TProps = never> = {
-    // TODO: Define some intermediate types to make this declaration clearer.
-    [TKind in NodeKind]: TProps extends never? ({ (
-        node: NodeTypeByKind[TKind]
-    ): TReturn }) : ({ (
-        node: NodeTypeByKind[TKind], 
-        props: TProps
-    ): TReturn }) 
-} & (TProps extends never? 
-    { } : 
-    { readonly props: TProps }
-);
-
-export function isGood(root: SyntaxTree): boolean {
-    return root.errors.length == 0;
 }
 
 function makeCommon(...children: SyntaxTree[]): SyntaxTreeCommon {

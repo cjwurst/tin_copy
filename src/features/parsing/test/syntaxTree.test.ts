@@ -1,7 +1,8 @@
 import { test } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
 import { syntaxTestFailReporter } from './syntaxTestFailReporter';
-import { Token, TokenKind, VariableTag } from '../../../common/intermediates.ts';
+import { Token, TokenKind } from '../../../common/intermediates.ts';
+import { VariableTag } from '../../../common/syntaxTree.ts';
 import { wellFormedParseArb } from './syntaxArbs.ts';
 import * as parser from '../parser.ts';
 

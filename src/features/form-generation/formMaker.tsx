@@ -1,5 +1,5 @@
 import React from 'react';
-import * as syn from '../../common/intermediates.ts';
+import * as syn from '../../common/syntaxTree.ts';
 import { TinContext, TinValue } from '../var-declaration/tinContext.ts';
 import { PiecewiseVisitor } from '../../common/visitor';
 import * as assert from '../../common/staticAssert';

@@ -1,4 +1,4 @@
-import * as syn from '../../common/intermediates.ts';
+import * as syn from '../../common/syntaxTree.ts';
 
 export type ErrorReport = {
     count: number,
