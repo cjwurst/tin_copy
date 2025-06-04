@@ -39,7 +39,6 @@ describe('Variable declaration', () => {
         (root) => {
             const variableCount = syn.fold<number>(
                 root,
-                0,
                                   // Insert the `kind` of a variable declaration node here
                 (r) => r.kind === 'variableTag'? 1 : 0,
                 (x, y) => x + y
@@ -54,7 +53,6 @@ describe('Variable declaration', () => {
         (root) => {
             const uniqueIdentifiers = syn.fold<Set<string>>(
                 root, 
-                new Set<string>(),
                 (node) => {
                     if (node.kind === 'variableTag' && node.identifier) 
                         return new Set<string>([node.identifier.lexeme])

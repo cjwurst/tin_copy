@@ -118,20 +118,16 @@ export function isGood(root: SyntaxTree): boolean {
 }
 
 /**
- * Fold over an AST from leaf to root.
+ * Fold over the AST in preorder.
  */
 export function fold<T>(
     root: SyntaxTree, 
-    initial: T,
     process: (r: SyntaxTree) => T,
     accumulate: (first: T, second: T) => T
 ): T {
-    let result = initial;
-    const childCount = root.children.length;
-    for (let i = 0; i < childCount; i++) {
-        result = accumulate(result, fold(root.children[i], result, process, accumulate));
-    }
-    return accumulate(process(root), result);
+    return root.children.map((child) => 
+        fold(child, process, accumulate)
+    ).reduce(accumulate, process(root));
 }
 
 function makeCommon(...children: SyntaxTree[]): SyntaxTreeCommon {

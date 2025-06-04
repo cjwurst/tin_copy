@@ -2,15 +2,11 @@ import { Draft } from './draft.ts';
 import { TinDraftError } from '../../common/tinErrors.ts';
 import { TinContext } from '../../common/intermediates.ts';
 import { isNever } from '../../common/staticAssert.ts';
-import { fold } from '../../common/transformations.ts';
 import * as syn from '../../common/syntaxTree.ts';
 
-const EMPTY_DRAFT: Draft = {content: '', errors: []};
-
 export function makeDraft(root: syn.SyntaxTree, context: TinContext) {
-    return fold<Draft>(
+    return syn.fold<Draft>(
         root, 
-        {content: '',errors: []},
         (r) => dispatchFill(r, context),
         (first, second) => ({
             content: first.content + second.content,
@@ -27,7 +23,7 @@ function dispatchFill(node: syn.SyntaxTree, context: TinContext): Draft {
             return fillFromVariableTag(node, context);
         case 'tinDoc': // fall through
         case 'eof':
-            return EMPTY_DRAFT;
+            return makeEmptyDraft();
         default:
             isNever(node);
     }
@@ -54,11 +50,11 @@ function fillFromVariableTag(
     variableTag: syn.VariableTag, 
     context: TinContext, 
 ): Draft {
-    const draft = EMPTY_DRAFT;
+    const draft = makeEmptyDraft();
 
     /* In this case no error is necessary since `variableTag` will already 
     have an error. */
-    if (!variableTag.identifier) return EMPTY_DRAFT;
+    if (!variableTag.identifier) return draft;
     const name = variableTag.identifier.lexeme;
     const variable = TinContext.tryGet(context, name);
     if (!variable) {
@@ -89,4 +85,8 @@ function fillFromVariableTag(
             isNever(variable);
     }
     return draft;
+}
+
+function makeEmptyDraft(): Draft {
+    return {content: '', errors: []};
 }

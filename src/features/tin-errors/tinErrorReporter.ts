@@ -11,7 +11,6 @@ export type ErrorReport = {
 export function reportErrors(root: syn.SyntaxTree): ErrorReport {
     return syn.fold(
         root, 
-        { count: 0, message: '' }, 
         processErrors, 
         combineReports
     );

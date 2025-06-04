@@ -33,8 +33,8 @@ describe('Draft maker', () => {
     });
 
     /* Note: This test does not check if the draft is filled correctly - only
-    that it is filled without error. TODO: This test will probably have to 
-    change when we implement type checking. */
+    that it is filled without error. */
+    //TODO: This test will probably have to change when we implement type checking.
     test.prop([wellFormedSyntaxTreeArbs.tinDoc])(
         'should generate a draft given a full context', 
         (root) => {
@@ -90,7 +90,7 @@ function expectSimpleTagDrafts<T>(
         const context = makeTinContext(variableTag);
         context.set(IDENTIFIER, TinValue.make(content));
         const draft = makeDraft(variableTag, context);
-        attachDraftToString(variableTag, draft);
+        //attachDraftToString(variableTag, draft);
         expect(draft.content).toBe(String(content));
     });
 }
