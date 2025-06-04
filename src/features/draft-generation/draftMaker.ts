@@ -7,7 +7,7 @@ import * as syn from '../../common/syntaxTree.ts';
 export function makeDraft(root: syn.SyntaxTree, context: TinContext) {
     return syn.fold<Draft>(
         root, 
-        (r) => dispatchFill(r, context),
+        (r: syn.SyntaxTree) => dispatchFill(r, context),
         (first, second) => ({
             content: first.content + second.content,
             errors: [...first.errors, ...second.errors]

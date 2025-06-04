@@ -39,8 +39,8 @@ describe('Variable declaration', () => {
         (root) => {
             const variableCount = syn.fold<number>(
                 root,
-                                  // Insert the `kind` of a variable declaration node here
-                (r) => r.kind === 'variableTag'? 1 : 0,
+                                                  // Insert the `kind` of a variable declaration node here
+                (r: syn.SyntaxTree) => r.kind === 'variableTag'? 1 : 0,
                 (x, y) => x + y
             );
             const context = makeGoodContext(root);
@@ -53,9 +53,9 @@ describe('Variable declaration', () => {
         (root) => {
             const uniqueIdentifiers = syn.fold<Set<string>>(
                 root, 
-                (node) => {
-                    if (node.kind === 'variableTag' && node.identifier) 
-                        return new Set<string>([node.identifier.lexeme])
+                (r: syn.SyntaxTree) => {
+                    if (r.kind === 'variableTag' && r.identifier) 
+                        return new Set<string>([r.identifier.lexeme])
                     return new Set<string>();
                 },
                 (ids1, ids2) => new Set([...ids1, ...ids2])
