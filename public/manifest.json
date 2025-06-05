@@ -1,10 +1,20 @@
 {
-    "manifest_version": 3,
-    "name": "Tin Copy",
-    "version": "1.0.0",
-    "description": "An email drafter made of tin.",
-    "action": {
-      "default_popup": "index.html"
-    },
-    "permissions": []
+  "manifest_version": 3,
+  "name": "Tin Copy",
+  "version": "0.1.0",
+  "description": "Make custom forms to help draft emails.",
+  "action": {
+    "default_title": "Tin Copy",
+    "default_popup": "index.html"
+  },
+  "permissions": [
+    "identity"
+  ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqTEMDbZNrJR756tdxVBiXkD+46Z42FhQbfWuMf71mHn/8eQrlLK3jxFFf9ou3vQ6hxp5tinVknY9N8UB0e2HXKOa1gV1611VBsqtBrXh5yXwVcqz8t7Tr/HgL20N3p0qu5QqBewoHtLB0MrNJaQUnOQecU+9piL/yRBx/8f9NwALHsRGY8URLKRXiUV2/gmCt7ImojzPLTgzXhIZe7nbxIlNG2gW3Xl5o9box8MNQFmPTnJqELwG65f0VJ0lcQto0zi1fBj9FizwWypziXBCs3k3C2yOLL2HSPdNhGc8rqt8v6nSe9+vj6Cd5TQipjvMWg8iEOAQHrA/OScZ3f9HlwIDAQAB",
+  "oauth2": {
+    "client_id": "958308359422-1vn95vbgjhdk58qssjdg90a4jp0dht70.apps.googleusercontent.com",
+    "scopes": [ 
+      "https://www.googleapis.com/auth/gmail.addons.current.action.compose"
+    ]
+  }
 }
